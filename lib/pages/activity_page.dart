@@ -219,16 +219,12 @@ class ActivityPage extends StatelessWidget {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2,
+        currentIndex: 1,
         selectedItemColor: Colors.orange[400],
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: '首页',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: '聊天',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.event),
@@ -245,13 +241,10 @@ class ActivityPage extends StatelessWidget {
               Navigator.pushReplacementNamed(context, '/home');
               break;
             case 1:
-              Navigator.pushNamed(context, '/chat');
-              break;
-            case 2:
               Navigator.pushReplacementNamed(context, '/activity');
               break;
-            case 3:
-              Navigator.pushNamed(context, '/profile');
+            case 2:
+              Navigator.pushReplacementNamed(context, '/profile');
               break;
           }
         },

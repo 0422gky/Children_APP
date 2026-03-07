@@ -33,6 +33,14 @@ class ProfilePage extends StatelessWidget {
         ),
         backgroundColor: Colors.purple[400],
         elevation: 0,
+        leading: isCurrentUser
+            ? null
+            : IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
         actions: isCurrentUser
             ? [
                 IconButton(
@@ -212,7 +220,7 @@ class ProfilePage extends StatelessWidget {
                   title: const Text('我的活动'),
                   trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () {
-                    Navigator.pushNamed(context, '/activity');
+                    Navigator.pushReplacementNamed(context, '/activity');
                   },
                 ),
               ),
@@ -250,16 +258,12 @@ class ProfilePage extends StatelessWidget {
       ),
       bottomNavigationBar: isCurrentUser
           ? BottomNavigationBar(
-              currentIndex: 3,
+              currentIndex: 2,
               selectedItemColor: Colors.purple[400],
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home),
                   label: '首页',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.chat),
-                  label: '聊天',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.event),
@@ -276,12 +280,9 @@ class ProfilePage extends StatelessWidget {
                     Navigator.pushReplacementNamed(context, '/home');
                     break;
                   case 1:
-                    Navigator.pushNamed(context, '/chat');
+                    Navigator.pushReplacementNamed(context, '/activity');
                     break;
                   case 2:
-                    Navigator.pushNamed(context, '/activity');
-                    break;
-                  case 3:
                     Navigator.pushReplacementNamed(context, '/profile');
                     break;
                 }

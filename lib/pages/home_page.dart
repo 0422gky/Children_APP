@@ -86,7 +86,7 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
-              Navigator.pushNamed(context, '/profile');
+              Navigator.pushReplacementNamed(context, '/profile');
             },
           ),
         ],
@@ -254,10 +254,6 @@ class HomePage extends StatelessWidget {
             label: '首页',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: '聊天',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.event),
             label: '活动',
           ),
@@ -272,13 +268,10 @@ class HomePage extends StatelessWidget {
               Navigator.pushReplacementNamed(context, '/home');
               break;
             case 1:
-              Navigator.pushNamed(context, '/chat');
+              Navigator.pushReplacementNamed(context, '/activity');
               break;
             case 2:
-              Navigator.pushNamed(context, '/activity');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/profile');
+              Navigator.pushReplacementNamed(context, '/profile');
               break;
           }
         },
