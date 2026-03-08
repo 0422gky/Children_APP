@@ -7,6 +7,9 @@ import 'pages/create_activity_page.dart';
 import 'pages/profile_page.dart';
 import 'pages/interest_selection_page.dart';
 import 'models/current_user.dart';
+import 'pages/parent_home_page.dart';
+import 'pages/approval_list_page.dart';
+import 'pages/safety_page.dart';
 
 void main() {
   // 初始化当前用户（模拟应用启动）
@@ -36,6 +39,9 @@ class MyApp extends StatelessWidget {
         '/activity': (context) => ActivityPage(),
         '/create-activity': (context) => const CreateActivityPage(),
         '/profile': (context) => ProfilePage(),
+        '/parent': (context) => const ParentHomePage(),
+        '/approval-list': (context) => const ApprovalListPage(),
+        '/safety': (context) => const SafetyPage(),
       },
     );
   }
