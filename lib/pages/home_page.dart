@@ -1,10 +1,80 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
+import '../models/current_user.dart';
+import '../widgets/friend_card.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
-  // 假数据：好友列表
+  // 假数据：所有潜在好友（用于推荐）
+  final List<User> _allPotentialFriends = [
+    User(
+      id: '1',
+      name: '小明',
+      avatar: 'https://i.pravatar.cc/150?img=1',
+      age: 8,
+      interests: ['⚽ 足球', '🎮 游戏'],
+      location: '附近 500m',
+    ),
+    User(
+      id: '2',
+      name: '小红',
+      avatar: 'https://i.pravatar.cc/150?img=2',
+      age: 7,
+      interests: ['🎨 画画', '📚 阅读'],
+      location: '附近 1km',
+    ),
+    User(
+      id: '3',
+      name: '小刚',
+      avatar: 'https://i.pravatar.cc/150?img=3',
+      age: 9,
+      interests: ['🧩 Lego', '⚽ 足球'],
+      location: '附近 800m',
+    ),
+    User(
+      id: '4',
+      name: '小强',
+      avatar: 'https://i.pravatar.cc/150?img=4',
+      age: 8,
+      interests: ['⚽ 足球', '🎮 游戏', '🧩 Lego'],
+      location: '附近 600m',
+    ),
+    User(
+      id: '5',
+      name: '小美',
+      avatar: 'https://i.pravatar.cc/150?img=5',
+      age: 7,
+      interests: ['⚽ 足球', '🎨 画画'],
+      location: '附近 1.2km',
+    ),
+    User(
+      id: '6',
+      name: '小乐',
+      avatar: 'https://i.pravatar.cc/150?img=6',
+      age: 8,
+      interests: ['🧩 Lego', '📚 阅读', '🎮 游戏'],
+      location: '附近 900m',
+    ),
+    User(
+      id: '7',
+      name: '小文',
+      avatar: 'https://i.pravatar.cc/150?img=7',
+      age: 9,
+      interests: ['📚 阅读', '🎨 画画'],
+      location: '附近 1.5km',
+    ),
+    User(
+      id: '8',
+      name: '小宇',
+      avatar: 'https://i.pravatar.cc/150?img=8',
+      age: 8,
+      interests: ['🎮 游戏', '⚽ 足球', '🧩 Lego'],
+      location: '附近 700m',
+    ),
+  ];
+
+  // 假数据：已添加的好友列表
   final List<User> _friends = [
     User(
       id: '1',
@@ -32,37 +102,39 @@ class HomePage extends StatelessWidget {
     ),
   ];
 
-  // 假数据：兴趣匹配
-  final Map<String, List<User>> _interestMatches = {
-    '⚽ 足球': [
-      User(
-        id: '4',
-        name: '小强',
-        avatar: 'https://i.pravatar.cc/150?img=4',
-        age: 8,
-        interests: ['⚽ 足球', '🎮 游戏'],
-        location: '附近 600m',
-      ),
-      User(
-        id: '5',
-        name: '小美',
-        avatar: 'https://i.pravatar.cc/150?img=5',
-        age: 7,
-        interests: ['⚽ 足球', '🎨 画画'],
-        location: '附近 1.2km',
-      ),
-    ],
-    '🧩 Lego': [
-      User(
-        id: '6',
-        name: '小乐',
-        avatar: 'https://i.pravatar.cc/150?img=6',
-        age: 8,
-        interests: ['🧩 Lego', '📚 阅读'],
-        location: '附近 900m',
-      ),
-    ],
-  };
+  /// 计算共同兴趣数量
+  int _calculateCommonInterests(User user1, User user2) {
+    final set1 = user1.interests.toSet();
+    final set2 = user2.interests.toSet();
+    return set1.intersection(set2).length;
+  }
+
+  /// 获取推荐好友列表（基于共同兴趣）
+  List<Map<String, dynamic>> _getRecommendedFriends() {
+    final currentUser = CurrentUser.user;
+    if (currentUser == null || currentUser.interests.isEmpty) {
+      return [];
+    }
+
+    // 获取已添加的好友ID列表
+    final friendIds = _friends.map((f) => f.id).toSet();
+
+    // 过滤出未添加的好友，并计算共同兴趣
+    final recommended = _allPotentialFriends
+        .where((user) => !friendIds.contains(user.id))
+        .map((user) {
+      return {
+        'user': user,
+        'commonInterests': _calculateCommonInterests(currentUser, user),
+      };
+    }).toList();
+
+    // 按共同兴趣数量从高到低排序
+    recommended.sort((a, b) =>
+        (b['commonInterests'] as int).compareTo(a['commonInterests'] as int));
+
+    return recommended;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,84 +167,62 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 兴趣匹配区域
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '🎯 兴趣匹配',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.purple[700],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 200,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _interestMatches.length,
-                      itemBuilder: (context, index) {
-                        final interest = _interestMatches.keys.elementAt(index);
-                        final users = _interestMatches[interest]!;
-                        return Container(
-                          width: 280,
-                          margin: const EdgeInsets.only(right: 12),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                spreadRadius: 2,
-                                blurRadius: 8,
-                              ),
-                            ],
+            // 推荐好友区域
+            Builder(
+              builder: (context) {
+                final recommended = _getRecommendedFriends();
+                if (recommended.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            '🌟 推荐好友',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.purple[700],
+                            ),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                interest,
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.orange[700],
-                                ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.orange[200],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${recommended.length} 位',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.orange[800],
                               ),
-                              const SizedBox(height: 8),
-                              Expanded(
-                                child: ListView.builder(
-                                  itemCount: users.length,
-                                  itemBuilder: (context, idx) {
-                                    final user = users[idx];
-                                    return ListTile(
-                                      leading: CircleAvatar(
-                                        radius: 25,
-                                        backgroundColor: Colors.purple[200],
-                                        backgroundImage: NetworkImage(user.avatar),
-                                      ),
-                                      title: Text(user.name),
-                                      subtitle: Text('${user.age}岁 · ${user.location}'),
-                                      onTap: () {
-                                        Navigator.pushNamed(context, '/profile', arguments: user);
-                                      },
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      ...recommended.take(5).map((item) {
+                        final user = item['user'] as User;
+                        final commonInterests = item['commonInterests'] as int;
+                        return FriendCard(
+                          friend: user,
+                          commonInterestsCount: commonInterests,
                         );
-                      },
-                    ),
+                      }).toList(),
+                    ],
                   ),
-                ],
-              ),
+                );
+              },
             ),
             // 好友列表
             Padding(
@@ -193,7 +243,8 @@ class HomePage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final friend = _friends[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -232,11 +283,13 @@ class HomePage extends StatelessWidget {
                       icon: const Icon(Icons.chat_bubble_outline),
                       color: Colors.purple[400],
                       onPressed: () {
-                        Navigator.pushNamed(context, '/chat', arguments: friend);
+                        Navigator.pushNamed(context, '/chat',
+                            arguments: friend);
                       },
                     ),
                     onTap: () {
-                      Navigator.pushNamed(context, '/profile', arguments: friend);
+                      Navigator.pushNamed(context, '/profile',
+                          arguments: friend);
                     },
                   ),
                 );

@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
+import '../models/current_user.dart';
 
 class ProfilePage extends StatelessWidget {
   ProfilePage({Key? key}) : super(key: key);
-
-  // 默认用户数据（当前用户）
-  final User _currentUser = User(
-    id: '0',
-    name: '我',
-    avatar: 'https://i.pravatar.cc/150?img=10',
-    age: 8,
-    interests: ['⚽ 足球', '🎮 游戏', '🧩 Lego'],
-    location: '附近',
-  );
 
   @override
   Widget build(BuildContext context) {
     // 如果传入了用户参数，显示该用户信息；否则显示当前用户信息
     final User? user = ModalRoute.of(context)?.settings.arguments as User?;
-    final User displayUser = user ?? _currentUser;
+    final User? currentUser = CurrentUser.user;
+    final User displayUser = user ?? currentUser ?? User(
+      id: '0',
+      name: '我',
+      avatar: 'https://i.pravatar.cc/150?img=10',
+      age: 8,
+      interests: [],
+      location: '附近',
+    );
     final bool isCurrentUser = user == null;
 
     return Scaffold(

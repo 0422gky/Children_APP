@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/current_user.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -20,8 +21,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleSubmit() {
-    // 模拟登录/注册，直接跳转到首页
-    Navigator.pushReplacementNamed(context, '/home');
+    if (_isLogin) {
+      // 登录：直接跳转到首页
+      // 初始化默认用户（模拟已登录用户）
+      CurrentUser.initDefaultUser();
+      // 如果用户还没有选择兴趣，跳转到兴趣选择页面
+      if (!CurrentUser.hasSelectedInterests) {
+        Navigator.pushReplacementNamed(context, '/interest-selection');
+      } else {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } else {
+      // 注册：先初始化用户，然后跳转到兴趣选择页面
+      CurrentUser.initDefaultUser();
+      Navigator.pushReplacementNamed(context, '/interest-selection');
+    }
   }
 
   @override
@@ -79,7 +93,8 @@ class _LoginPageState extends State<LoginPage> {
                     controller: _usernameController,
                     decoration: InputDecoration(
                       hintText: '用户名',
-                      prefixIcon: const Icon(Icons.person, color: Colors.purple),
+                      prefixIcon:
+                          const Icon(Icons.person, color: Colors.purple),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
                         borderSide: BorderSide.none,
