@@ -248,7 +248,9 @@ class ProfilePage extends StatelessWidget {
                   leading: const Icon(Icons.family_restroom, color: Colors.green),
                   title: const Text('家长设置'),
                   trailing: const Icon(Icons.arrow_forward_ios),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, '/parent');
+                  },
                 ),
               ),
             ],
@@ -257,16 +259,25 @@ class ProfilePage extends StatelessWidget {
       ),
       bottomNavigationBar: isCurrentUser
           ? BottomNavigationBar(
-              currentIndex: 2,
+              currentIndex: 4,
               selectedItemColor: Colors.purple[400],
+              type: BottomNavigationBarType.fixed,
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home),
                   label: '首页',
                 ),
                 BottomNavigationBarItem(
+                  icon: Icon(Icons.chat),
+                  label: '聊天',
+                ),
+                BottomNavigationBarItem(
                   icon: Icon(Icons.event),
                   label: '活动',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.family_restroom),
+                  label: '家长',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),
@@ -279,9 +290,15 @@ class ProfilePage extends StatelessWidget {
                     Navigator.pushReplacementNamed(context, '/home');
                     break;
                   case 1:
-                    Navigator.pushReplacementNamed(context, '/activity');
+                    Navigator.pushReplacementNamed(context, '/chat');
                     break;
                   case 2:
+                    Navigator.pushReplacementNamed(context, '/activity');
+                    break;
+                  case 3:
+                    Navigator.pushReplacementNamed(context, '/parent');
+                    break;
+                  case 4:
                     Navigator.pushReplacementNamed(context, '/profile');
                     break;
                 }
