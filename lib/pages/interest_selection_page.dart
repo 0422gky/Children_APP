@@ -16,6 +16,11 @@ class _InterestSelectionPageState extends State<InterestSelectionPage> {
     '🎮 游戏',
     '📚 阅读',
     '🧩 Lego',
+    '🎵 音乐', 
+    '🧶 手工', 
+    '🎬 电影',
+    '♟️ 下棋', 
+    '📷 摄影',
   ];
 
   // 用户已选择的兴趣

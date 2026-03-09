@@ -11,6 +11,7 @@ class Activity {
   final List<String> participantIds;
   final int maxParticipants;
   final String interest;
+  final String image;
 
   Activity({
     required this.id,
@@ -25,6 +26,7 @@ class Activity {
     required this.participantIds,
     required this.maxParticipants,
     required this.interest,
+    required this.image,
   });
 
   int get currentParticipants => participantIds.length;

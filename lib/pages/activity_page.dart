@@ -15,10 +15,11 @@ class ActivityPage extends StatelessWidget {
       location: '中央公园',
       organizerId: '1',
       organizerName: '小明',
-      organizerAvatar: 'https://i.pravatar.cc/150?img=1',
+      organizerAvatar: 'assets/images/avatar1.png',
       participantIds: ['1', '2'],
       maxParticipants: 6,
       interest: '⚽ 足球',
+      image: 'assets/images/football.jpg',
     ),
     Activity(
       id: '2',
@@ -29,10 +30,11 @@ class ActivityPage extends StatelessWidget {
       location: '社区活动中心',
       organizerId: '3',
       organizerName: '小刚',
-      organizerAvatar: 'https://i.pravatar.cc/150?img=3',
+      organizerAvatar: 'assets/images/avatar2.png',
       participantIds: ['3', '4'],
       maxParticipants: 8,
       interest: '🧩 Lego',
+      image: 'assets/images/lego.jpg',
     ),
     Activity(
       id: '3',
@@ -43,10 +45,11 @@ class ActivityPage extends StatelessWidget {
       location: '艺术教室',
       organizerId: '2',
       organizerName: '小红',
-      organizerAvatar: 'https://i.pravatar.cc/150?img=2',
+      organizerAvatar: 'assets/images/avatar4.png',
       participantIds: ['2'],
       maxParticipants: 5,
       interest: '🎨 画画',
+      image: 'assets/images/drawing.jpg',
     ),
   ];
 
@@ -94,6 +97,18 @@ class ActivityPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Container(
+                      height: 150,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        image: DecorationImage(
+                          image: AssetImage(activity.image),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     Row(
                       children: [
                         CircleAvatar(
