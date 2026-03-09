@@ -301,14 +301,23 @@ class HomePage extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         selectedItemColor: Colors.purple[400],
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: '首页',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: '聊天',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.event),
             label: '活动',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.family_restroom),
+            label: '家长',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -321,9 +330,15 @@ class HomePage extends StatelessWidget {
               Navigator.pushReplacementNamed(context, '/home');
               break;
             case 1:
-              Navigator.pushReplacementNamed(context, '/activity');
+              Navigator.pushReplacementNamed(context, '/chat');
               break;
             case 2:
+              Navigator.pushReplacementNamed(context, '/activity');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/parent');
+              break;
+            case 4:
               Navigator.pushReplacementNamed(context, '/profile');
               break;
           }
