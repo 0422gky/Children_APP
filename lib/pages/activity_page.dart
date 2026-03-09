@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/activity.dart';
 import '../models/mock_parent_data.dart';
 import '../models/approval_request.dart';
+import '../widgets/screen_time_banner.dart';
+import '../utils/navigation_helper.dart';
 
 class ActivityPage extends StatefulWidget {
   ActivityPage({super.key});
@@ -114,9 +116,12 @@ class _ActivityPageState extends State<ActivityPage> {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: _activities.length,
+        itemCount: _activities.length + 1,
         itemBuilder: (context, index) {
-          final activity = _activities[index];
+          if (index == 0) {
+            return const ScreenTimeBanner();
+          }
+          final activity = _activities[index - 1];
           final status = _getStatus(activity.id);
           return Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -299,23 +304,7 @@ class _ActivityPageState extends State<ActivityPage> {
           ),
         ],
         onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/home');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/chat');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/activity');
-              break;
-            case 3:
-              Navigator.pushReplacementNamed(context, '/parent');
-              break;
-            case 4:
-              Navigator.pushReplacementNamed(context, '/profile');
-              break;
-          }
+          NavigationHelper.goToTab(context, index);
         },
       ),
     );

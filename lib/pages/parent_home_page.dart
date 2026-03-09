@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/mock_parent_data.dart';
 import '../models/current_user.dart';
 import '../models/binding.dart';
+import '../utils/navigation_helper.dart';
 
 class ParentHomePage extends StatelessWidget {
   const ParentHomePage({Key? key}) : super(key: key);
@@ -304,23 +305,7 @@ class ParentHomePage extends StatelessWidget {
           ),
         ],
         onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/home');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/chat');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/activity');
-              break;
-            case 3:
-              Navigator.pushReplacementNamed(context, '/parent');
-              break;
-            case 4:
-              Navigator.pushReplacementNamed(context, '/profile');
-              break;
-          }
+          NavigationHelper.goToTab(context, index);
         },
       ),
     );

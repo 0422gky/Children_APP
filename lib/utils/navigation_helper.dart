@@ -46,4 +46,11 @@ class NavigationHelper {
     final hasArguments = route?.settings.arguments != null;
     return hasArguments && Navigator.canPop(context);
   }
+
+  /// 统一的 Tab 切换工具：根据 index 切换到底部导航对应的一级页面
+  static void goToTab(BuildContext context, int index) {
+    const routes = ['/home', '/chat', '/activity', '/parent', '/profile'];
+    if (index < 0 || index >= routes.length) return;
+    Navigator.pushReplacementNamed(context, routes[index]);
+  }
 }

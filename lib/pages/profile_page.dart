@@ -3,6 +3,7 @@ import '../models/user.dart';
 import '../models/current_user.dart';
 import '../models/binding.dart';
 import '../utils/navigation_helper.dart';
+import '../widgets/screen_time_banner.dart';
 
 class ProfilePage extends StatelessWidget {
   ProfilePage({Key? key}) : super(key: key);
@@ -58,6 +59,7 @@ class ProfilePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const ScreenTimeBanner(),
             // 头像和基本信息
             Container(
               padding: const EdgeInsets.all(24),
@@ -227,7 +229,7 @@ class ProfilePage extends StatelessWidget {
                   title: const Text('我的活动'),
                   trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, '/activity');
+                    NavigationHelper.goToTab(context, 2);
                   },
                 ),
               ),
@@ -242,7 +244,7 @@ class ProfilePage extends StatelessWidget {
                   title: const Text('我的好友'),
                   trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, '/home');
+                    NavigationHelper.goToTab(context, 0);
                   },
                 ),
               ),
@@ -306,7 +308,7 @@ class ProfilePage extends StatelessWidget {
                   title: const Text('家长设置'),
                   trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () {
-                    Navigator.pushNamed(context, '/parent');
+                    NavigationHelper.goToTab(context, 3);
                   },
                 ),
               ),
@@ -342,23 +344,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
               onTap: (index) {
-                switch (index) {
-                  case 0:
-                    Navigator.pushReplacementNamed(context, '/home');
-                    break;
-                  case 1:
-                    Navigator.pushReplacementNamed(context, '/chat');
-                    break;
-                  case 2:
-                    Navigator.pushReplacementNamed(context, '/activity');
-                    break;
-                  case 3:
-                    Navigator.pushReplacementNamed(context, '/parent');
-                    break;
-                  case 4:
-                    Navigator.pushReplacementNamed(context, '/profile');
-                    break;
-                }
+                NavigationHelper.goToTab(context, index);
               },
             )
           : null,

@@ -12,6 +12,7 @@ import 'models/current_user.dart';
 import 'pages/parent_home_page.dart';
 import 'pages/approval_list_page.dart';
 import 'pages/safety_page.dart';
+import 'pages/screen_time_limit_page.dart';
 
 void main() {
   // 不初始化用户，让用户先选择身份
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/parent': (context) => const ParentHomePage(),
         '/approval-list': (context) => const ApprovalListPage(),
         '/safety': (context) => const SafetyPage(),
+        '/screen-time-limit': (context) => const ScreenTimeLimitPage(),
         '/binding-code': (context) {
           final isParent = ModalRoute.of(context)?.settings.arguments as bool? ?? false;
           return BindingCodePage(isParent: isParent);

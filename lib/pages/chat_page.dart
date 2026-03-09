@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../widgets/chat_bubble.dart';
 import '../utils/navigation_helper.dart';
+import '../widgets/screen_time_banner.dart';
 
 class ChatPage extends StatelessWidget {
   ChatPage({Key? key}) : super(key: key);
@@ -75,6 +76,7 @@ class ChatPage extends StatelessWidget {
       ),
       body: Column(
         children: [
+          const ScreenTimeBanner(),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -166,23 +168,7 @@ class ChatPage extends StatelessWidget {
           ),
         ],
         onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/home');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/chat');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/activity');
-              break;
-            case 3:
-              Navigator.pushReplacementNamed(context, '/parent');
-              break;
-            case 4:
-              Navigator.pushReplacementNamed(context, '/profile');
-              break;
-          }
+          NavigationHelper.goToTab(context, index);
         },
       ),
     );

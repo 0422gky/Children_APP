@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../models/current_user.dart';
 import '../widgets/friend_card.dart';
+import '../widgets/screen_time_banner.dart';
+import '../utils/navigation_helper.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -169,7 +171,7 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/profile');
+              NavigationHelper.goToTab(context, 4);
             },
           ),
         ],
@@ -178,6 +180,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const ScreenTimeBanner(),
             // 推荐好友区域
             Builder(
               builder: (context) {
@@ -336,23 +339,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
         onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/home');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/chat');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/activity');
-              break;
-            case 3:
-              Navigator.pushReplacementNamed(context, '/parent');
-              break;
-            case 4:
-              Navigator.pushReplacementNamed(context, '/profile');
-              break;
-          }
+          NavigationHelper.goToTab(context, index);
         },
       ),
     );
