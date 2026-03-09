@@ -21,20 +21,33 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleSubmit() {
+    final currentUser = CurrentUser.user;
+    if (currentUser == null) {
+      // 如果没有选择身份，应该先选择身份
+      Navigator.pushReplacementNamed(context, '/role-select');
+      return;
+    }
+
     if (_isLogin) {
-      // 登录：直接跳转到首页
-      // 初始化默认用户（模拟已登录用户）
-      CurrentUser.initDefaultUser();
-      // 如果用户还没有选择兴趣，跳转到兴趣选择页面
-      if (!CurrentUser.hasSelectedInterests) {
-        Navigator.pushReplacementNamed(context, '/interest-selection');
+      // 登录：根据角色跳转到不同页面
+      if (currentUser.isParent) {
+        Navigator.pushReplacementNamed(context, '/parent');
       } else {
-        Navigator.pushReplacementNamed(context, '/home');
+        // 儿童用户：如果还没有选择兴趣，跳转到兴趣选择页面
+        if (!CurrentUser.hasSelectedInterests) {
+          Navigator.pushReplacementNamed(context, '/interest-selection');
+        } else {
+          Navigator.pushReplacementNamed(context, '/home');
+        }
       }
     } else {
-      // 注册：先初始化用户，然后跳转到兴趣选择页面
-      CurrentUser.initDefaultUser();
-      Navigator.pushReplacementNamed(context, '/interest-selection');
+      // 注册：根据角色跳转
+      if (currentUser.isParent) {
+        Navigator.pushReplacementNamed(context, '/parent');
+      } else {
+        // 儿童用户：跳转到兴趣选择页面
+        Navigator.pushReplacementNamed(context, '/interest-selection');
+      }
     }
   }
 

@@ -6,14 +6,15 @@ import 'pages/activity_page.dart';
 import 'pages/create_activity_page.dart';
 import 'pages/profile_page.dart';
 import 'pages/interest_selection_page.dart';
+import 'pages/role_select_page.dart';
+import 'pages/binding_code_page.dart';
 import 'models/current_user.dart';
 import 'pages/parent_home_page.dart';
 import 'pages/approval_list_page.dart';
 import 'pages/safety_page.dart';
 
 void main() {
-  // 初始化当前用户（模拟应用启动）
-  CurrentUser.initDefaultUser();
+  // 不初始化用户，让用户先选择身份
   runApp(const MyApp());
 }
 
@@ -30,8 +31,9 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Roboto',
         useMaterial3: true,
       ),
-      initialRoute: '/login',
+      initialRoute: '/role-select',
       routes: {
+        '/role-select': (context) => const RoleSelectPage(),
         '/login': (context) => const LoginPage(),
         '/interest-selection': (context) => const InterestSelectionPage(),
         '/home': (context) => HomePage(),
@@ -42,6 +44,10 @@ class MyApp extends StatelessWidget {
         '/parent': (context) => const ParentHomePage(),
         '/approval-list': (context) => const ApprovalListPage(),
         '/safety': (context) => const SafetyPage(),
+        '/binding-code': (context) {
+          final isParent = ModalRoute.of(context)?.settings.arguments as bool? ?? false;
+          return BindingCodePage(isParent: isParent);
+        },
       },
     );
   }

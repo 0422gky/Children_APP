@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/mock_parent_data.dart';
+import '../models/current_user.dart';
+import '../models/binding.dart';
 
 class ParentHomePage extends StatelessWidget {
   const ParentHomePage({Key? key}) : super(key: key);
@@ -8,6 +10,10 @@ class ParentHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isBound = MockParentData.isBound;
     final int pendingCount = MockParentData.pendingCount;
+    final currentUser = CurrentUser.user;
+    final boundChildren = currentUser != null
+        ? BindingCodeManager.getBoundChildren(currentUser.id)
+        : <String>[];
 
     return Scaffold(
       backgroundColor: Colors.purple[50],
@@ -141,6 +147,70 @@ class ParentHomePage extends StatelessWidget {
                               ? Colors.white
                               : Colors.grey[700],
                           fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // 绑定管理卡片
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.link,
+                          color: Colors.blue[700],
+                          size: 28,
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          '绑定管理',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      '已绑定 ${boundChildren.length} 个儿童账号',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/binding-code',
+                            arguments: true, // isParent = true
+                          );
+                        },
+                        icon: const Icon(Icons.qr_code),
+                        label: const Text('生成绑定码'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue[400],
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                         ),
                       ),
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../models/current_user.dart';
+import '../models/binding.dart';
 import '../utils/navigation_helper.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -20,6 +21,7 @@ class ProfilePage extends StatelessWidget {
           age: 8,
           interests: [],
           location: '附近',
+          role: UserRole.child,
         );
     final bool isCurrentUser = user == null;
 
@@ -243,6 +245,54 @@ class ProfilePage extends StatelessWidget {
                     Navigator.pushReplacementNamed(context, '/home');
                   },
                 ),
+              ),
+              const SizedBox(height: 12),
+              // 绑定状态卡片
+              Builder(
+                builder: (context) {
+                  final currentUser = CurrentUser.user;
+                  final boundParentId = currentUser != null
+                      ? BindingCodeManager.getBoundParent(currentUser.id)
+                      : null;
+                  final isBound = boundParentId != null;
+
+                  return Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 24),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: ListTile(
+                      leading: Icon(
+                        isBound ? Icons.check_circle : Icons.link_off,
+                        color: isBound ? Colors.green : Colors.orange,
+                      ),
+                      title: Text(isBound ? '已绑定家长' : '未绑定家长'),
+                      subtitle: Text(
+                        isBound
+                            ? '已与家长账号绑定'
+                            : '输入绑定码与家长账号绑定',
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios),
+                      onTap: () {
+                        if (isBound) {
+                          // 已绑定，显示绑定信息
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('已绑定家长账号'),
+                            ),
+                          );
+                        } else {
+                          // 未绑定，跳转到绑定码输入页面
+                          Navigator.pushNamed(
+                            context,
+                            '/binding-code',
+                            arguments: false, // isParent = false
+                          );
+                        }
+                      },
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 12),
               Card(

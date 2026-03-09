@@ -15,6 +15,7 @@ class HomePage extends StatelessWidget {
       age: 8,
       interests: ['⚽ 足球', '🎮 游戏'],
       location: '附近 500m',
+      role: UserRole.child,
     ),
     User(
       id: '2',
@@ -23,6 +24,7 @@ class HomePage extends StatelessWidget {
       age: 7,
       interests: ['🎨 画画', '📚 阅读'],
       location: '附近 1km',
+      role: UserRole.child,
     ),
     User(
       id: '3',
@@ -31,6 +33,7 @@ class HomePage extends StatelessWidget {
       age: 9,
       interests: ['🧩 Lego', '⚽ 足球'],
       location: '附近 800m',
+      role: UserRole.child,
     ),
     User(
       id: '4',
@@ -39,6 +42,7 @@ class HomePage extends StatelessWidget {
       age: 8,
       interests: ['⚽ 足球', '🎮 游戏', '🧩 Lego'],
       location: '附近 600m',
+      role: UserRole.child,
     ),
     User(
       id: '5',
@@ -47,6 +51,7 @@ class HomePage extends StatelessWidget {
       age: 7,
       interests: ['⚽ 足球', '🎨 画画'],
       location: '附近 1.2km',
+      role: UserRole.child,
     ),
     User(
       id: '6',
@@ -55,6 +60,7 @@ class HomePage extends StatelessWidget {
       age: 8,
       interests: ['🧩 Lego', '📚 阅读', '🎮 游戏'],
       location: '附近 900m',
+      role: UserRole.child,
     ),
     User(
       id: '7',
@@ -63,6 +69,7 @@ class HomePage extends StatelessWidget {
       age: 9,
       interests: ['📚 阅读', '🎨 画画'],
       location: '附近 1.5km',
+      role: UserRole.child,
     ),
     User(
       id: '8',
@@ -71,6 +78,7 @@ class HomePage extends StatelessWidget {
       age: 8,
       interests: ['🎮 游戏', '⚽ 足球', '🧩 Lego'],
       location: '附近 700m',
+      role: UserRole.child,
     ),
   ];
 
@@ -83,6 +91,7 @@ class HomePage extends StatelessWidget {
       age: 8,
       interests: ['⚽ 足球', '🎮 游戏'],
       location: '附近 500m',
+      role: UserRole.child,
     ),
     User(
       id: '2',
@@ -91,6 +100,7 @@ class HomePage extends StatelessWidget {
       age: 7,
       interests: ['🎨 画画', '📚 阅读'],
       location: '附近 1km',
+      role: UserRole.child,
     ),
     User(
       id: '3',
@@ -99,6 +109,7 @@ class HomePage extends StatelessWidget {
       age: 9,
       interests: ['🧩 Lego', '⚽ 足球'],
       location: '附近 800m',
+      role: UserRole.child,
     ),
   ];
 
