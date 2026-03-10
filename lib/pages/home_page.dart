@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../models/current_user.dart';
 import '../widgets/friend_card.dart';
+import '../widgets/screen_time_banner.dart';
+import '../utils/navigation_helper.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -15,6 +17,7 @@ class HomePage extends StatelessWidget {
       age: 8,
       interests: ['⚽ 足球', '🎮 游戏'],
       location: '附近 500m',
+      role: UserRole.child,
     ),
     User(
       id: '2',
@@ -23,6 +26,7 @@ class HomePage extends StatelessWidget {
       age: 7,
       interests: ['🎨 画画', '📚 阅读'],
       location: '附近 1km',
+      role: UserRole.child,
     ),
     User(
       id: '3',
@@ -31,6 +35,7 @@ class HomePage extends StatelessWidget {
       age: 9,
       interests: ['🧩 Lego', '⚽ 足球'],
       location: '附近 800m',
+      role: UserRole.child,
     ),
     User(
       id: '4',
@@ -39,6 +44,7 @@ class HomePage extends StatelessWidget {
       age: 8,
       interests: ['⚽ 足球', '🎮 游戏', '🧩 Lego'],
       location: '附近 600m',
+      role: UserRole.child,
     ),
     User(
       id: '5',
@@ -47,6 +53,7 @@ class HomePage extends StatelessWidget {
       age: 7,
       interests: ['⚽ 足球', '🎨 画画'],
       location: '附近 1.2km',
+      role: UserRole.child,
     ),
     User(
       id: '6',
@@ -55,6 +62,7 @@ class HomePage extends StatelessWidget {
       age: 8,
       interests: ['🧩 Lego', '📚 阅读', '🎮 游戏'],
       location: '附近 900m',
+      role: UserRole.child,
     ),
     User(
       id: '7',
@@ -63,6 +71,7 @@ class HomePage extends StatelessWidget {
       age: 9,
       interests: ['📚 阅读', '🎨 画画'],
       location: '附近 1.5km',
+      role: UserRole.child,
     ),
     User(
       id: '8',
@@ -71,6 +80,7 @@ class HomePage extends StatelessWidget {
       age: 8,
       interests: ['🎮 游戏', '⚽ 足球', '🧩 Lego'],
       location: '附近 700m',
+      role: UserRole.child,
     ),
   ];
 
@@ -83,6 +93,7 @@ class HomePage extends StatelessWidget {
       age: 8,
       interests: ['⚽ 足球', '🎮 游戏'],
       location: '附近 500m',
+      role: UserRole.child,
     ),
     User(
       id: '2',
@@ -91,6 +102,7 @@ class HomePage extends StatelessWidget {
       age: 7,
       interests: ['🎨 画画', '📚 阅读'],
       location: '附近 1km',
+      role: UserRole.child,
     ),
     User(
       id: '3',
@@ -99,6 +111,7 @@ class HomePage extends StatelessWidget {
       age: 9,
       interests: ['🧩 Lego', '⚽ 足球'],
       location: '附近 800m',
+      role: UserRole.child,
     ),
   ];
 
@@ -158,7 +171,7 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/profile');
+              NavigationHelper.goToTab(context, 4);
             },
           ),
         ],
@@ -167,6 +180,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const ScreenTimeBanner(),
             // 推荐好友区域
             Builder(
               builder: (context) {
@@ -301,14 +315,23 @@ class HomePage extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         selectedItemColor: Colors.purple[400],
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: '首页',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: '聊天',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.event),
             label: '活动',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.family_restroom),
+            label: '家长',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -316,17 +339,7 @@ class HomePage extends StatelessWidget {
           ),
         ],
         onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/home');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/activity');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/profile');
-              break;
-          }
+          NavigationHelper.goToTab(context, index);
         },
       ),
     );

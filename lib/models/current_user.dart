@@ -11,6 +11,12 @@ class CurrentUser {
   /// 是否已选择兴趣
   static bool get hasSelectedInterests => _hasSelectedInterests;
 
+  /// 是否为家长
+  static bool get isParent => _user?.isParent ?? false;
+
+  /// 是否为儿童
+  static bool get isChild => _user?.isChild ?? false;
+
   /// 设置当前用户
   static void setUser(User user) {
     _user = user;
@@ -26,13 +32,14 @@ class CurrentUser {
         age: _user!.age,
         interests: interests,
         location: _user!.location,
+        role: _user!.role,
       );
       _hasSelectedInterests = true;
     }
   }
 
-  /// 初始化默认用户（用于测试）
-  static void initDefaultUser() {
+  /// 初始化默认儿童用户（用于测试）
+  static void initDefaultChildUser() {
     _user = User(
       id: '0',
       name: '我',
@@ -40,8 +47,28 @@ class CurrentUser {
       age: 8,
       interests: [], // 初始为空，需要选择
       location: '附近',
+      role: UserRole.child,
     );
     _hasSelectedInterests = false;
+  }
+
+  /// 初始化默认家长用户（用于测试）
+  static void initDefaultParentUser() {
+    _user = User(
+      id: 'parent_0',
+      name: '家长',
+      avatar: 'https://i.pravatar.cc/150?img=20',
+      age: 35,
+      interests: [],
+      location: '附近',
+      role: UserRole.parent,
+    );
+    _hasSelectedInterests = false;
+  }
+
+  /// 初始化默认用户（用于测试，保持向后兼容）
+  static void initDefaultUser() {
+    initDefaultChildUser();
   }
 
   /// 重置（用于登出）

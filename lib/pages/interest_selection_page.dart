@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../models/current_user.dart';
+import '../database/database_helper.dart';
 
 class InterestSelectionPage extends StatefulWidget {
   const InterestSelectionPage({Key? key}) : super(key: key);
@@ -9,24 +11,103 @@ class InterestSelectionPage extends StatefulWidget {
 }
 
 class _InterestSelectionPageState extends State<InterestSelectionPage> {
-  // 所有可选的兴趣列表
-  final List<String> _allInterests = [
-    '⚽ 足球',
-    '🎨 画画',
-    '🎮 游戏',
-    '📚 阅读',
-    '🧩 Lego',
-    '🎵 音乐', 
-    '🧶 手工', 
-    '🎬 电影',
-    '♟️ 下棋', 
-    '📷 摄影',
+  // 分类列表
+  final List<_InterestCategory> _categories = const [
+    _InterestCategory(id: 'recommend', name: '推荐'),
+    _InterestCategory(id: 'hobby', name: '爱好'),
+    _InterestCategory(id: 'travel', name: '旅行'),
+    _InterestCategory(id: 'life', name: '生活'),
+    _InterestCategory(id: 'personality', name: '性格'),
+    _InterestCategory(id: 'music', name: '音乐'),
+    _InterestCategory(id: 'sport', name: '运动'),
+    _InterestCategory(id: 'food', name: '美食'),
+    _InterestCategory(id: 'pet', name: '宠物'),
+    _InterestCategory(id: 'nature', name: '自然'),
+    _InterestCategory(id: 'art', name: '艺术'),
+    _InterestCategory(id: 'game', name: '游戏'),
+  ];
+
+  // 所有兴趣项（40+，按分类组织）
+  late final List<_InterestItem> _allItems = [
+    // 推荐
+    const _InterestItem('recommend', '🌟 一起玩', '推荐'),
+    const _InterestItem('recommend', '🤝 交新朋友', '推荐'),
+    const _InterestItem('recommend', '🎉 派对聚会', '推荐'),
+    const _InterestItem('recommend', '🏟 亲子活动', '推荐'),
+    // 爱好
+    const _InterestItem('hobby', '⚽ 足球', '爱好'),
+    const _InterestItem('hobby', '🏀 篮球', '爱好'),
+    const _InterestItem('hobby', '🎾 网球', '爱好'),
+    const _InterestItem('hobby', '🏓 乒乓球', '爱好'),
+    const _InterestItem('hobby', '🎨 画画', '爱好'),
+    const _InterestItem('hobby', '🧩 拼图', '爱好'),
+    const _InterestItem('hobby', '📚 阅读', '爱好'),
+    const _InterestItem('hobby', '🎮 游戏', '爱好'),
+    // 旅行
+    const _InterestItem('travel', '🏖 海边玩水', '旅行'),
+    const _InterestItem('travel', '⛰ 爬山徒步', '旅行'),
+    const _InterestItem('travel', '🏕 露营野餐', '旅行'),
+    const _InterestItem('travel', '🏙 城市探索', '旅行'),
+    const _InterestItem('travel', '🚂 火车旅行', '旅行'),
+    // 生活
+    const _InterestItem('life', '🍳 一起做饭', '生活'),
+    const _InterestItem('life', '🛒 逛超市', '生活'),
+    const _InterestItem('life', '🧹 整理房间', '生活'),
+    const _InterestItem('life', '🚌 上下学路上聊天', '生活'),
+    // 性格
+    const _InterestItem('personality', '😄 外向开朗', '性格'),
+    const _InterestItem('personality', '🤫 安静内向', '性格'),
+    const _InterestItem('personality', '🧠 爱思考', '性格'),
+    const _InterestItem('personality', '🎭 爱表演', '性格'),
+    const _InterestItem('personality', '🤹 爱尝试新鲜事物', '性格'),
+    // 音乐
+    const _InterestItem('music', '🎵 听流行歌', '音乐'),
+    const _InterestItem('music', '🎹 钢琴', '音乐'),
+    const _InterestItem('music', '🎻 小提琴', '音乐'),
+    const _InterestItem('music', '🥁 打鼓', '音乐'),
+    const _InterestItem('music', '🎤 唱歌', '音乐'),
+    // 运动
+    const _InterestItem('sport', '🚴 骑自行车', '运动'),
+    const _InterestItem('sport', '🏊 游泳', '运动'),
+    const _InterestItem('sport', '🤸 体操', '运动'),
+    const _InterestItem('sport', '🏸 羽毛球', '运动'),
+    const _InterestItem('sport', '🥋 跆拳道', '运动'),
+    // 美食
+    const _InterestItem('food', '🍕 披萨', '美食'),
+    const _InterestItem('food', '🍣 寿司', '美食'),
+    const _InterestItem('food', '🍰 蛋糕甜品', '美食'),
+    const _InterestItem('food', '🍜 面条', '美食'),
+    const _InterestItem('food', '🍎 健康水果', '美食'),
+    // 宠物
+    const _InterestItem('pet', '🐶 狗狗', '宠物'),
+    const _InterestItem('pet', '🐱 猫咪', '宠物'),
+    const _InterestItem('pet', '🐰 小兔子', '宠物'),
+    const _InterestItem('pet', '🐹 仓鼠', '宠物'),
+    const _InterestItem('pet', '🐦 小鸟', '宠物'),
+    // 自然
+    const _InterestItem('nature', '🌳 森林', '自然'),
+    const _InterestItem('nature', '🌊 大海', '自然'),
+    const _InterestItem('nature', '🌌 星空', '自然'),
+    const _InterestItem('nature', '🌈 彩虹', '自然'),
+    const _InterestItem('nature', '🌻 植物花草', '自然'),
+    // 艺术
+    const _InterestItem('art', '🎭 戏剧表演', '艺术'),
+    const _InterestItem('art', '🎬 看电影', '艺术'),
+    const _InterestItem('art', '📷 拍照', '艺术'),
+    const _InterestItem('art', '🎧 听故事', '艺术'),
+    // 游戏
+    const _InterestItem('game', '🧩 桌游', '游戏'),
+    const _InterestItem('game', '♟ 国际象棋', '游戏'),
+    const _InterestItem('game', '🎮 主机游戏', '游戏'),
+    const _InterestItem('game', '📱 手机小游戏', '游戏'),
   ];
 
   // 用户已选择的兴趣
   final Set<String> _selectedInterests = {};
 
-  void _handleComplete() {
+  String _currentCategoryId = 'recommend';
+
+  Future<void> _handleComplete() async {
     if (_selectedInterests.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -37,11 +118,38 @@ class _InterestSelectionPageState extends State<InterestSelectionPage> {
       return;
     }
 
-    // 保存用户选择的兴趣
-    CurrentUser.setInterests(_selectedInterests.toList());
+    final currentUser = CurrentUser.user;
+    if (currentUser == null || !currentUser.isChild) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('用户信息错误'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-    // 跳转到首页
-    Navigator.pushReplacementNamed(context, '/home');
+    try {
+      // 保存到数据库
+      final interestsList = _selectedInterests.toList();
+      await DatabaseHelper.instance.updateChildProfile(
+        currentUser.id,
+        {'interests_json': jsonEncode(interestsList)},
+      );
+
+      // 更新当前用户
+      CurrentUser.setInterests(interestsList);
+
+      // 跳转到首页
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('保存失败：${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -110,83 +218,95 @@ class _InterestSelectionPageState extends State<InterestSelectionPage> {
                         color: Colors.purple[700],
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    // 兴趣选择网格
-                    Wrap(
-                      spacing: 16,
-                      runSpacing: 16,
-                      children: _allInterests.map((interest) {
-                        final isSelected =
-                            _selectedInterests.contains(interest);
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              if (isSelected) {
-                                _selectedInterests.remove(interest);
-                              } else {
-                                _selectedInterests.add(interest);
-                              }
-                            });
-                          },
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 16,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? Colors.purple[400]
-                                  : Colors.white,
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(
-                                color: isSelected
-                                    ? Colors.purple[600]!
-                                    : Colors.purple[200]!,
-                                width: 3,
+                    const SizedBox(height: 16),
+                    // 分类横向导航
+                    SizedBox(
+                      height: 40,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _categories.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 8),
+                        itemBuilder: (context, index) {
+                          final cat = _categories[index];
+                          final bool selected = cat.id == _currentCategoryId;
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _currentCategoryId = cat.id;
+                              });
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: isSelected
-                                      ? Colors.purple.withOpacity(0.3)
-                                      : Colors.grey.withOpacity(0.2),
-                                  spreadRadius: 2,
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 4),
+                              decoration: BoxDecoration(
+                                color: selected
+                                    ? Colors.purple[400]
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: selected
+                                      ? Colors.purple[600]!
+                                      : Colors.purple[200]!,
+                                  width: 2,
                                 ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (isSelected)
-                                  const Icon(
-                                    Icons.check_circle,
-                                    color: Colors.white,
-                                    size: 24,
-                                  )
-                                else
-                                  Icon(
-                                    Icons.circle_outlined,
-                                    color: Colors.purple[300],
-                                    size: 24,
-                                  ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  interest,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  cat.name,
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold,
-                                    color: isSelected
+                                    color: selected
                                         ? Colors.white
                                         : Colors.purple[700],
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // 兴趣图片卡片网格
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final filtered = _allItems
+                            .where((item) =>
+                                item.categoryId == _currentCategoryId ||
+                                _currentCategoryId == 'recommend')
+                            .toList();
+                        return Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: filtered.map((item) {
+                            final String label = item.label;
+                            final bool isSelected =
+                                _selectedInterests.contains(label);
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  if (isSelected) {
+                                    _selectedInterests.remove(label);
+                                  } else {
+                                    _selectedInterests.add(label);
+                                  }
+                                });
+                              },
+                              child: _InterestCard(
+                                label: label,
+                                categoryName: item.categoryName,
+                                selected: isSelected,
+                                width:
+                                    (constraints.maxWidth - 12) / 2, // 两列布局
+                              ),
+                            );
+                          }).toList(),
                         );
-                      }).toList(),
+                      },
                     ),
                     const SizedBox(height: 24),
                     // 已选择提示
@@ -269,3 +389,117 @@ class _InterestSelectionPageState extends State<InterestSelectionPage> {
     );
   }
 }
+
+class _InterestCategory {
+  final String id;
+  final String name;
+
+  const _InterestCategory({
+    required this.id,
+    required this.name,
+  });
+}
+
+class _InterestItem {
+  final String categoryId;
+  final String label;
+  final String categoryName;
+
+  const _InterestItem(this.categoryId, this.label, this.categoryName);
+}
+
+class _InterestCard extends StatelessWidget {
+  final String label;
+  final String categoryName;
+  final bool selected;
+  final double width;
+
+  const _InterestCard({
+    Key? key,
+    required this.label,
+    required this.categoryName,
+    required this.selected,
+    required this.width,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = selected
+        ? [Colors.purple[400]!, Colors.purple[600]!]
+        : [Colors.orange[200]!, Colors.pink[200]!];
+
+    return Container(
+      width: width.clamp(140, 260),
+      height: 90,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          colors: colors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.25),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // 模拟图片的浅色叠层
+          Positioned(
+            right: -10,
+            top: -10,
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          Positioned(
+            left: 12,
+            top: 12,
+            right: 12,
+            child: Text(
+              label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          Positioned(
+            left: 12,
+            bottom: 12,
+            child: Row(
+              children: [
+                Icon(
+                  selected ? Icons.check_circle : Icons.circle_outlined,
+                  size: 18,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  categoryName,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+

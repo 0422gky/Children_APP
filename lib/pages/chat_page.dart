@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../widgets/chat_bubble.dart';
+import '../utils/navigation_helper.dart';
+import '../widgets/screen_time_banner.dart';
 
 class ChatPage extends StatelessWidget {
   ChatPage({Key? key}) : super(key: key);
@@ -38,7 +40,8 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final User? friend = ModalRoute.of(context)?.settings.arguments as User?;
     final String friendName = friend?.name ?? '好友';
-    final String friendAvatar = friend?.avatar ?? 'https://i.pravatar.cc/150?img=1';
+    final String friendAvatar =
+        friend?.avatar ?? 'https://i.pravatar.cc/150?img=1';
     const String myAvatar = 'https://i.pravatar.cc/150?img=10';
 
     return Scaffold(
@@ -66,12 +69,14 @@ class ChatPage extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            // 智能返回：如果有 arguments（从好友列表进入），则 pop；否则切换到首页
+            NavigationHelper.smartPop(context, defaultRoute: '/home');
           },
         ),
       ),
       body: Column(
         children: [
+          const ScreenTimeBanner(),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -135,6 +140,36 @@ class ChatPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 1,
+        selectedItemColor: Colors.orange[400],
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: '首页',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: '聊天',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event),
+            label: '活动',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.family_restroom),
+            label: '家长',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: '我的',
+          ),
+        ],
+        onTap: (index) {
+          NavigationHelper.goToTab(context, index);
+        },
       ),
     );
   }

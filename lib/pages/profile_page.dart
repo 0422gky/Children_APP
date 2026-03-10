@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../models/current_user.dart';
+import '../services/binding_service.dart';
+import '../utils/navigation_helper.dart';
+import '../widgets/screen_time_banner.dart';
 
 class ProfilePage extends StatelessWidget {
   ProfilePage({Key? key}) : super(key: key);
@@ -10,14 +13,17 @@ class ProfilePage extends StatelessWidget {
     // 如果传入了用户参数，显示该用户信息；否则显示当前用户信息
     final User? user = ModalRoute.of(context)?.settings.arguments as User?;
     final User? currentUser = CurrentUser.user;
-    final User displayUser = user ?? currentUser ?? User(
-      id: '0',
-      name: '我',
-      avatar: 'https://i.pravatar.cc/150?img=10',
-      age: 8,
-      interests: [],
-      location: '附近',
-    );
+    final User displayUser = user ??
+        currentUser ??
+        User(
+          id: '0',
+          name: '我',
+          avatar: 'https://i.pravatar.cc/150?img=10',
+          age: 8,
+          interests: [],
+          location: '附近',
+          role: UserRole.child,
+        );
     final bool isCurrentUser = user == null;
 
     return Scaffold(
@@ -32,14 +38,15 @@ class ProfilePage extends StatelessWidget {
         ),
         backgroundColor: Colors.purple[400],
         elevation: 0,
-        leading: isCurrentUser
-            ? null
-            : IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
+         leading: isCurrentUser
+             ? null
+             : IconButton(
+                 icon: const Icon(Icons.arrow_back),
+                 onPressed: () {
+                   // 智能返回：如果有 arguments（从其他页面进入），则 pop；否则切换到首页
+                   NavigationHelper.smartPop(context, defaultRoute: '/home');
+                 },
+               ),
         actions: isCurrentUser
             ? [
                 IconButton(
@@ -52,6 +59,7 @@ class ProfilePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const ScreenTimeBanner(),
             // 头像和基本信息
             Container(
               padding: const EdgeInsets.all(24),
@@ -96,7 +104,8 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      const Icon(Icons.location_on, color: Colors.white70, size: 18),
+                      const Icon(Icons.location_on,
+                          color: Colors.white70, size: 18),
                       const SizedBox(width: 4),
                       Text(
                         displayUser.location,
@@ -168,7 +177,8 @@ class ProfilePage extends StatelessWidget {
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/chat', arguments: displayUser);
+                          Navigator.pushNamed(context, '/chat',
+                              arguments: displayUser);
                         },
                         icon: const Icon(Icons.chat),
                         label: const Text('发送消息'),
@@ -219,7 +229,7 @@ class ProfilePage extends StatelessWidget {
                   title: const Text('我的活动'),
                   trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, '/activity');
+                    NavigationHelper.goToTab(context, 2);
                   },
                 ),
               ),
@@ -234,9 +244,57 @@ class ProfilePage extends StatelessWidget {
                   title: const Text('我的好友'),
                   trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, '/home');
+                    NavigationHelper.goToTab(context, 0);
                   },
                 ),
+              ),
+              const SizedBox(height: 12),
+              // 绑定状态卡片
+              FutureBuilder<String?>(
+                future: CurrentUser.user != null
+                    ? BindingService.instance.getParentByChild(CurrentUser.user!.id)
+                    : Future.value(null),
+                builder: (context, snapshot) {
+                  final boundParentId = snapshot.data;
+                  final isBound = boundParentId != null;
+
+                  return Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 24),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: ListTile(
+                      leading: Icon(
+                        isBound ? Icons.check_circle : Icons.link_off,
+                        color: isBound ? Colors.green : Colors.orange,
+                      ),
+                      title: Text(isBound ? '已绑定家长' : '未绑定家长'),
+                      subtitle: Text(
+                        isBound
+                            ? '已与家长账号绑定'
+                            : '输入绑定码与家长账号绑定',
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios),
+                      onTap: () {
+                        if (isBound) {
+                          // 已绑定，显示绑定信息
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('已绑定家长账号'),
+                            ),
+                          );
+                        } else {
+                          // 未绑定，跳转到绑定码输入页面
+                          Navigator.pushNamed(
+                            context,
+                            '/binding-code',
+                            arguments: false, // isParent = false
+                          );
+                        }
+                      },
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 12),
               Card(
@@ -245,10 +303,13 @@ class ProfilePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: ListTile(
-                  leading: const Icon(Icons.family_restroom, color: Colors.green),
+                  leading:
+                      const Icon(Icons.family_restroom, color: Colors.green),
                   title: const Text('家长设置'),
                   trailing: const Icon(Icons.arrow_forward_ios),
-                  onTap: () {},
+                  onTap: () {
+                    NavigationHelper.goToTab(context, 3);
+                  },
                 ),
               ),
             ],
@@ -257,16 +318,25 @@ class ProfilePage extends StatelessWidget {
       ),
       bottomNavigationBar: isCurrentUser
           ? BottomNavigationBar(
-              currentIndex: 2,
+              currentIndex: 4,
               selectedItemColor: Colors.purple[400],
+              type: BottomNavigationBarType.fixed,
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.home),
                   label: '首页',
                 ),
                 BottomNavigationBarItem(
+                  icon: Icon(Icons.chat),
+                  label: '聊天',
+                ),
+                BottomNavigationBarItem(
                   icon: Icon(Icons.event),
                   label: '活动',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.family_restroom),
+                  label: '家长',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),
@@ -274,17 +344,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
               onTap: (index) {
-                switch (index) {
-                  case 0:
-                    Navigator.pushReplacementNamed(context, '/home');
-                    break;
-                  case 1:
-                    Navigator.pushReplacementNamed(context, '/activity');
-                    break;
-                  case 2:
-                    Navigator.pushReplacementNamed(context, '/profile');
-                    break;
-                }
+                NavigationHelper.goToTab(context, index);
               },
             )
           : null,
