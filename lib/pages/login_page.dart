@@ -131,9 +131,15 @@ class _LoginPageState extends State<LoginPage> {
         username: _usernameController.text.trim(),
         password: _passwordController.text,
         role: _selectedRole == UserRole.parent ? 'parent' : 'child',
-        parentName: _selectedRole == UserRole.parent ? _nameController.text.trim() : null,
-        childName: _selectedRole == UserRole.child ? _nameController.text.trim() : null,
-        age: _selectedRole == UserRole.child ? int.tryParse(_ageController.text) : null,
+        parentName: _selectedRole == UserRole.parent
+            ? _nameController.text.trim()
+            : null,
+        childName: _selectedRole == UserRole.child
+            ? _nameController.text.trim()
+            : null,
+        age: _selectedRole == UserRole.child
+            ? int.tryParse(_ageController.text)
+            : null,
       );
 
       // 加载用户资料并设置当前用户
@@ -175,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
     final user = User(
       id: dbUser.id,
       name: name,
-      avatar: 'https://i.pravatar.cc/150?img=${dbUser.id.hashCode % 20}',
+      avatar: 'assets/images/avatar1.png',
       age: age,
       interests: interests,
       location: '附近',
@@ -245,7 +251,8 @@ class _LoginPageState extends State<LoginPage> {
                 // 显示选择的角色
                 if (_selectedRole != null)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: _selectedRole == UserRole.parent
                           ? Colors.orange[100]
@@ -253,7 +260,9 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      _selectedRole == UserRole.parent ? '👨‍👩‍👧 家长身份' : '👶 儿童身份',
+                      _selectedRole == UserRole.parent
+                          ? '👨‍👩‍👧 家长身份'
+                          : '👶 儿童身份',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -348,8 +357,10 @@ class _LoginPageState extends State<LoginPage> {
                     child: TextField(
                       controller: _nameController,
                       decoration: InputDecoration(
-                        hintText: _selectedRole == UserRole.parent ? '家长姓名' : '儿童姓名',
-                        prefixIcon: const Icon(Icons.badge, color: Colors.purple),
+                        hintText:
+                            _selectedRole == UserRole.parent ? '家长姓名' : '儿童姓名',
+                        prefixIcon:
+                            const Icon(Icons.badge, color: Colors.purple),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
                           borderSide: BorderSide.none,
@@ -379,7 +390,8 @@ class _LoginPageState extends State<LoginPage> {
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           hintText: '年龄',
-                          prefixIcon: const Icon(Icons.cake, color: Colors.purple),
+                          prefixIcon:
+                              const Icon(Icons.cake, color: Colors.purple),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             borderSide: BorderSide.none,

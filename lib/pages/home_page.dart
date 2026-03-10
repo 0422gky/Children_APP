@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '1',
       name: '小明',
-      avatar: 'https://i.pravatar.cc/150?img=1',
+      avatar: 'assets/images/avatar1.png',
       age: 8,
       interests: ['⚽ 足球', '🎮 游戏'],
       location: '附近 500m',
@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '2',
       name: '小红',
-      avatar: 'https://i.pravatar.cc/150?img=2',
+      avatar: 'assets/images/avatar4.png',
       age: 7,
       interests: ['🎨 画画', '📚 阅读'],
       location: '附近 1km',
@@ -31,7 +31,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '3',
       name: '小刚',
-      avatar: 'https://i.pravatar.cc/150?img=3',
+      avatar: 'assets/images/avatar2.png',
       age: 9,
       interests: ['🧩 Lego', '⚽ 足球'],
       location: '附近 800m',
@@ -40,7 +40,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '4',
       name: '小强',
-      avatar: 'https://i.pravatar.cc/150?img=4',
+      avatar: 'assets/images/avatar1.png',
       age: 8,
       interests: ['⚽ 足球', '🎮 游戏', '🧩 Lego'],
       location: '附近 600m',
@@ -49,7 +49,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '5',
       name: '小美',
-      avatar: 'https://i.pravatar.cc/150?img=5',
+      avatar: 'assets/images/avatar4.png',
       age: 7,
       interests: ['⚽ 足球', '🎨 画画'],
       location: '附近 1.2km',
@@ -58,7 +58,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '6',
       name: '小乐',
-      avatar: 'https://i.pravatar.cc/150?img=6',
+      avatar: 'assets/images/avatar3.png',
       age: 8,
       interests: ['🧩 Lego', '📚 阅读', '🎮 游戏'],
       location: '附近 900m',
@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '7',
       name: '小文',
-      avatar: 'https://i.pravatar.cc/150?img=7',
+      avatar: 'assets/images/avatar3.png',
       age: 9,
       interests: ['📚 阅读', '🎨 画画'],
       location: '附近 1.5km',
@@ -76,7 +76,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '8',
       name: '小宇',
-      avatar: 'https://i.pravatar.cc/150?img=8',
+      avatar: 'assets/images/avatar2.png',
       age: 8,
       interests: ['🎮 游戏', '⚽ 足球', '🧩 Lego'],
       location: '附近 700m',
@@ -89,7 +89,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '1',
       name: '小明',
-      avatar: 'https://i.pravatar.cc/150?img=1',
+      avatar: 'assets/images/avatar1.png',
       age: 8,
       interests: ['⚽ 足球', '🎮 游戏'],
       location: '附近 500m',
@@ -98,7 +98,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '2',
       name: '小红',
-      avatar: 'https://i.pravatar.cc/150?img=2',
+      avatar: 'assets/images/avatar4.png',
       age: 7,
       interests: ['🎨 画画', '📚 阅读'],
       location: '附近 1km',
@@ -107,7 +107,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '3',
       name: '小刚',
-      avatar: 'https://i.pravatar.cc/150?img=3',
+      avatar: 'assets/images/avatar2.png',
       age: 9,
       interests: ['🧩 Lego', '⚽ 足球'],
       location: '附近 800m',

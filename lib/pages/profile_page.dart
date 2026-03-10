@@ -18,7 +18,7 @@ class ProfilePage extends StatelessWidget {
         User(
           id: '0',
           name: '我',
-          avatar: 'https://i.pravatar.cc/150?img=10',
+          avatar: 'assets/images/avatar1.png',
           age: 8,
           interests: [],
           location: '附近',
@@ -38,15 +38,15 @@ class ProfilePage extends StatelessWidget {
         ),
         backgroundColor: Colors.purple[400],
         elevation: 0,
-         leading: isCurrentUser
-             ? null
-             : IconButton(
-                 icon: const Icon(Icons.arrow_back),
-                 onPressed: () {
-                   // 智能返回：如果有 arguments（从其他页面进入），则 pop；否则切换到首页
-                   NavigationHelper.smartPop(context, defaultRoute: '/home');
-                 },
-               ),
+        leading: isCurrentUser
+            ? null
+            : IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  // 智能返回：如果有 arguments（从其他页面进入），则 pop；否则切换到首页
+                  NavigationHelper.smartPop(context, defaultRoute: '/home');
+                },
+              ),
         actions: isCurrentUser
             ? [
                 IconButton(
@@ -252,7 +252,8 @@ class ProfilePage extends StatelessWidget {
               // 绑定状态卡片
               FutureBuilder<String?>(
                 future: CurrentUser.user != null
-                    ? BindingService.instance.getParentByChild(CurrentUser.user!.id)
+                    ? BindingService.instance
+                        .getParentByChild(CurrentUser.user!.id)
                     : Future.value(null),
                 builder: (context, snapshot) {
                   final boundParentId = snapshot.data;
@@ -270,9 +271,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                       title: Text(isBound ? '已绑定家长' : '未绑定家长'),
                       subtitle: Text(
-                        isBound
-                            ? '已与家长账号绑定'
-                            : '输入绑定码与家长账号绑定',
+                        isBound ? '已与家长账号绑定' : '输入绑定码与家长账号绑定',
                       ),
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {

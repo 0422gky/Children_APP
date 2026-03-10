@@ -41,8 +41,8 @@ class ChatPage extends StatelessWidget {
     final User? friend = ModalRoute.of(context)?.settings.arguments as User?;
     final String friendName = friend?.name ?? '好友';
     final String friendAvatar =
-        friend?.avatar ?? 'https://i.pravatar.cc/150?img=1';
-    const String myAvatar = 'https://i.pravatar.cc/150?img=10';
+        friend?.avatar ?? 'assets/images/avatar1.png'; // asset
+    const String myAvatar = 'assets/images/avatar1.png'; // asset
 
     return Scaffold(
       backgroundColor: Colors.blue[50],
