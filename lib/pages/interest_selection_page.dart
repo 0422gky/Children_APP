@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../models/current_user.dart';
+import '../database/database_helper.dart';
 
 class InterestSelectionPage extends StatefulWidget {
   const InterestSelectionPage({Key? key}) : super(key: key);
@@ -105,7 +107,7 @@ class _InterestSelectionPageState extends State<InterestSelectionPage> {
 
   String _currentCategoryId = 'recommend';
 
-  void _handleComplete() {
+  Future<void> _handleComplete() async {
     if (_selectedInterests.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -116,11 +118,38 @@ class _InterestSelectionPageState extends State<InterestSelectionPage> {
       return;
     }
 
-    // 保存用户选择的兴趣
-    CurrentUser.setInterests(_selectedInterests.toList());
+    final currentUser = CurrentUser.user;
+    if (currentUser == null || !currentUser.isChild) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('用户信息错误'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-    // 跳转到首页
-    Navigator.pushReplacementNamed(context, '/home');
+    try {
+      // 保存到数据库
+      final interestsList = _selectedInterests.toList();
+      await DatabaseHelper.instance.updateChildProfile(
+        currentUser.id,
+        {'interests_json': jsonEncode(interestsList)},
+      );
+
+      // 更新当前用户
+      CurrentUser.setInterests(interestsList);
+
+      // 跳转到首页
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('保存失败：${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override

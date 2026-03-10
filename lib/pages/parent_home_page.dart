@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/mock_parent_data.dart';
 import '../models/current_user.dart';
-import '../models/binding.dart';
+import '../services/binding_service.dart';
 import '../utils/navigation_helper.dart';
 
 class ParentHomePage extends StatelessWidget {
@@ -9,12 +9,21 @@ class ParentHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isBound = MockParentData.isBound;
-    final int pendingCount = MockParentData.pendingCount;
     final currentUser = CurrentUser.user;
-    final boundChildren = currentUser != null
-        ? BindingCodeManager.getBoundChildren(currentUser.id)
-        : <String>[];
+    
+    // 使用 FutureBuilder 异步加载绑定的儿童列表
+    return FutureBuilder<List<dynamic>>(
+      future: currentUser != null
+          ? BindingService.instance.getChildrenByParent(currentUser.id)
+          : Future.value([]),
+      builder: (context, snapshot) {
+        final boundChildren = snapshot.data ?? [];
+        return _buildContent(context, boundChildren.length);
+      },
+    );
+  }
+
+  Widget _buildContent(BuildContext context, int boundChildrenCount) {
 
     return Scaffold(
       backgroundColor: Colors.purple[50],
@@ -69,7 +78,7 @@ class ParentHomePage extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            isBound ? '已绑定家长账号（演示用假数据）' : '未绑定家长账号（演示占位）',
+                            '家长账号管理',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[700],
@@ -117,39 +126,49 @@ class ParentHomePage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            pendingCount > 0
-                                ? '当前有 $pendingCount 条活动加入申请等待处理'
-                                : '暂无新的活动加入申请',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[700],
-                            ),
+                          Builder(
+                            builder: (context) {
+                              final pendingCount = MockParentData.pendingCount;
+                              return Text(
+                                pendingCount > 0
+                                    ? '当前有 $pendingCount 条活动加入申请等待处理'
+                                    : '暂无新的活动加入申请',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: pendingCount > 0
-                            ? Colors.red[400]
-                            : Colors.grey[300],
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        '$pendingCount',
-                        style: TextStyle(
-                          color: pendingCount > 0
-                              ? Colors.white
-                              : Colors.grey[700],
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                    Builder(
+                      builder: (context) {
+                        final pendingCount = MockParentData.pendingCount;
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: pendingCount > 0
+                                ? Colors.red[400]
+                                : Colors.grey[300],
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            '$pendingCount',
+                            style: TextStyle(
+                              color: pendingCount > 0
+                                  ? Colors.white
+                                  : Colors.grey[700],
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -186,7 +205,7 @@ class ParentHomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      '已绑定 ${boundChildren.length} 个儿童账号',
+                      '已绑定 $boundChildrenCount 个儿童账号',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../models/current_user.dart';
-import '../models/binding.dart';
+import '../services/binding_service.dart';
 import '../utils/navigation_helper.dart';
 import '../widgets/screen_time_banner.dart';
 
@@ -250,12 +250,12 @@ class ProfilePage extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               // 绑定状态卡片
-              Builder(
-                builder: (context) {
-                  final currentUser = CurrentUser.user;
-                  final boundParentId = currentUser != null
-                      ? BindingCodeManager.getBoundParent(currentUser.id)
-                      : null;
+              FutureBuilder<String?>(
+                future: CurrentUser.user != null
+                    ? BindingService.instance.getParentByChild(CurrentUser.user!.id)
+                    : Future.value(null),
+                builder: (context, snapshot) {
+                  final boundParentId = snapshot.data;
                   final isBound = boundParentId != null;
 
                   return Card(

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/current_user.dart';
-import '../models/binding.dart';
+import '../services/binding_service.dart';
+import '../services/auth_service.dart';
 
 /// 绑定码生成/输入页面
 class BindingCodePage extends StatefulWidget {
@@ -21,6 +22,33 @@ class _BindingCodePageState extends State<BindingCodePage> {
   final TextEditingController _codeController = TextEditingController();
   bool _isLoading = false;
 
+  final BindingService _bindingService = BindingService.instance;
+  final AuthService _authService = AuthService.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    // 如果是家长，尝试获取已有绑定码
+    if (widget.isParent) {
+      _loadExistingBindCode();
+    }
+  }
+
+  Future<void> _loadExistingBindCode() async {
+    final currentUser = CurrentUser.user;
+    if (currentUser == null || !currentUser.isParent) return;
+
+    try {
+      final bindCode =
+          await _bindingService.getOrGenerateBindCode(currentUser.id);
+      setState(() {
+        _generatedCode = bindCode;
+      });
+    } catch (e) {
+      // 忽略错误，用户可以在页面上生成
+    }
+  }
+
   @override
   void dispose() {
     _codeController.dispose();
@@ -28,18 +56,35 @@ class _BindingCodePageState extends State<BindingCodePage> {
   }
 
   /// 生成绑定码（家长端）
-  void _generateCode() {
+  Future<void> _generateCode() async {
     final currentUser = CurrentUser.user;
     if (currentUser == null || !currentUser.isParent) return;
 
-    final bindingCode = BindingCodeManager.createBindingCode(currentUser.id);
     setState(() {
-      _generatedCode = bindingCode.code;
+      _isLoading = true;
     });
+
+    try {
+      final bindCode = await _bindingService.generateBindCode(currentUser.id);
+      setState(() {
+        _generatedCode = bindCode;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('生成绑定码失败：${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   /// 输入绑定码并绑定（儿童端）
-  void _bindWithCode() {
+  Future<void> _bindWithCode() async {
     final code = _codeController.text.trim();
     if (code.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -55,24 +100,24 @@ class _BindingCodePageState extends State<BindingCodePage> {
       _isLoading = true;
     });
 
-    // 模拟网络延迟
-    Future.delayed(const Duration(milliseconds: 500), () {
+    try {
       final currentUser = CurrentUser.user;
       if (currentUser == null || !currentUser.isChild) {
-        setState(() {
-          _isLoading = false;
-        });
+        _showError('当前用户不是儿童用户');
         return;
       }
 
-      final binding = BindingCodeManager.bind(code, currentUser.id);
-      
-      setState(() {
-        _isLoading = false;
-      });
+      final success =
+          await _bindingService.bindChildToParent(currentUser.id, code);
 
-      if (binding != null) {
-        // 绑定成功
+      if (success) {
+        // 绑定成功，更新当前用户的绑定信息
+        final childProfile = await _authService.getChildProfile(currentUser.id);
+        if (childProfile != null) {
+          final updatedUser = CurrentUser.user!;
+          CurrentUser.setUser(updatedUser);
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('绑定成功！'),
@@ -81,15 +126,24 @@ class _BindingCodePageState extends State<BindingCodePage> {
         );
         Navigator.pop(context);
       } else {
-        // 绑定失败
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('绑定码无效或已过期，请重新输入'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        _showError('绑定码无效或已使用，请重新输入');
       }
-    });
+    } catch (e) {
+      _showError('绑定失败：${e.toString()}');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   /// 复制绑定码
@@ -117,7 +171,8 @@ class _BindingCodePageState extends State<BindingCodePage> {
             fontSize: 24,
           ),
         ),
-        backgroundColor: widget.isParent ? Colors.orange[400] : Colors.purple[400],
+        backgroundColor:
+            widget.isParent ? Colors.orange[400] : Colors.purple[400],
         elevation: 0,
       ),
       body: SafeArea(
@@ -144,7 +199,9 @@ class _BindingCodePageState extends State<BindingCodePage> {
                   children: [
                     Icon(
                       widget.isParent ? Icons.info_outline : Icons.qr_code,
-                      color: widget.isParent ? Colors.orange[700] : Colors.purple[700],
+                      color: widget.isParent
+                          ? Colors.orange[700]
+                          : Colors.purple[700],
                       size: 28,
                     ),
                     const SizedBox(width: 12),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import '../models/user.dart';
 import '../models/current_user.dart';
+import '../services/auth_service.dart';
+import '../database/database_helper.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -11,43 +14,194 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
   bool _isLogin = true;
+  bool _isLoading = false;
+  UserRole? _selectedRole;
+
+  final AuthService _authService = AuthService.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    // 初始化数据库
+    _initDatabase();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 从路由参数获取选择的角色（在 didChangeDependencies 中安全访问 context）
+    if (_selectedRole == null) {
+      final role = ModalRoute.of(context)?.settings.arguments as UserRole?;
+      _selectedRole = role;
+    }
+  }
+
+  Future<void> _initDatabase() async {
+    // 确保数据库已初始化
+    await DatabaseHelper.instance.database;
+  }
 
   @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
+    _nameController.dispose();
+    _ageController.dispose();
     super.dispose();
   }
 
-  void _handleSubmit() {
-    final currentUser = CurrentUser.user;
-    if (currentUser == null) {
-      // 如果没有选择身份，应该先选择身份
-      Navigator.pushReplacementNamed(context, '/role-select');
+  Future<void> _handleLogin() async {
+    if (_usernameController.text.isEmpty || _passwordController.text.isEmpty) {
+      _showError('请输入用户名和密码');
       return;
     }
 
-    if (_isLogin) {
-      // 登录：根据角色跳转到不同页面
-      if (currentUser.isParent) {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final dbUser = await _authService.login(
+        _usernameController.text.trim(),
+        _passwordController.text,
+      );
+
+      if (dbUser == null) {
+        _showError('用户名或密码错误');
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // 根据角色加载资料并设置当前用户
+      await _loadUserProfile(dbUser);
+
+      // 根据角色跳转
+      if (dbUser.role == 'parent') {
         Navigator.pushReplacementNamed(context, '/parent');
       } else {
-        // 儿童用户：如果还没有选择兴趣，跳转到兴趣选择页面
-        if (!CurrentUser.hasSelectedInterests) {
+        // 检查是否已选择兴趣
+        final childProfile = await _authService.getChildProfile(dbUser.id);
+        if (childProfile == null || childProfile.interests.isEmpty) {
           Navigator.pushReplacementNamed(context, '/interest-selection');
         } else {
           Navigator.pushReplacementNamed(context, '/home');
         }
       }
-    } else {
-      // 注册：根据角色跳转
-      if (currentUser.isParent) {
+    } catch (e) {
+      _showError('登录失败：${e.toString()}');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _handleRegister() async {
+    if (_selectedRole == null) {
+      Navigator.pushReplacementNamed(context, '/role-select');
+      return;
+    }
+
+    if (_usernameController.text.isEmpty || _passwordController.text.isEmpty) {
+      _showError('请输入用户名和密码');
+      return;
+    }
+
+    if (!_isLogin && _nameController.text.isEmpty) {
+      _showError('请输入姓名');
+      return;
+    }
+
+    if (_selectedRole == UserRole.child && _ageController.text.isEmpty) {
+      _showError('请输入年龄');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final dbUser = await _authService.register(
+        username: _usernameController.text.trim(),
+        password: _passwordController.text,
+        role: _selectedRole == UserRole.parent ? 'parent' : 'child',
+        parentName: _selectedRole == UserRole.parent ? _nameController.text.trim() : null,
+        childName: _selectedRole == UserRole.child ? _nameController.text.trim() : null,
+        age: _selectedRole == UserRole.child ? int.tryParse(_ageController.text) : null,
+      );
+
+      // 加载用户资料并设置当前用户
+      await _loadUserProfile(dbUser);
+
+      // 根据角色跳转
+      if (dbUser.role == 'parent') {
         Navigator.pushReplacementNamed(context, '/parent');
       } else {
-        // 儿童用户：跳转到兴趣选择页面
         Navigator.pushReplacementNamed(context, '/interest-selection');
       }
+    } catch (e) {
+      _showError('注册失败：${e.toString()}');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadUserProfile(dynamic dbUser) async {
+    // 转换为 UI 使用的 User 模型
+    UserRole role = dbUser.role == 'parent' ? UserRole.parent : UserRole.child;
+    String name;
+    int age;
+    List<String> interests = [];
+
+    if (role == UserRole.parent) {
+      final profile = await _authService.getParentProfile(dbUser.id);
+      name = profile?.parentName ?? '家长';
+      age = 35; // 默认年龄
+    } else {
+      final profile = await _authService.getChildProfile(dbUser.id);
+      name = profile?.childName ?? '我';
+      age = profile?.age ?? 8;
+      interests = profile?.interests ?? [];
+    }
+
+    final user = User(
+      id: dbUser.id,
+      name: name,
+      avatar: 'https://i.pravatar.cc/150?img=${dbUser.id.hashCode % 20}',
+      age: age,
+      interests: interests,
+      location: '附近',
+      role: role,
+    );
+
+    CurrentUser.setUser(user);
+    if (interests.isNotEmpty) {
+      CurrentUser.setInterests(interests);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  void _handleSubmit() {
+    if (_isLogin) {
+      _handleLogin();
+    } else {
+      _handleRegister();
     }
   }
 
@@ -88,6 +242,35 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 40),
+                // 显示选择的角色
+                if (_selectedRole != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: _selectedRole == UserRole.parent
+                          ? Colors.orange[100]
+                          : Colors.purple[100],
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      _selectedRole == UserRole.parent ? '👨‍👩‍👧 家长身份' : '👶 儿童身份',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: _selectedRole == UserRole.parent
+                            ? Colors.orange[800]
+                            : Colors.purple[800],
+                      ),
+                    ),
+                  ),
+                if (_selectedRole == null)
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/role-select');
+                    },
+                    child: const Text('请先选择身份'),
+                  ),
+                const SizedBox(height: 16),
                 // 输入框
                 Container(
                   decoration: BoxDecoration(
@@ -146,13 +329,75 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+                // 注册时显示额外字段
+                if (!_isLogin) ...[
+                  const SizedBox(height: 16),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: _nameController,
+                      decoration: InputDecoration(
+                        hintText: _selectedRole == UserRole.parent ? '家长姓名' : '儿童姓名',
+                        prefixIcon: const Icon(Icons.badge, color: Colors.purple),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  if (_selectedRole == UserRole.child) ...[
+                    const SizedBox(height: 16),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 2,
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: _ageController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: '年龄',
+                          prefixIcon: const Icon(Icons.cake, color: Colors.purple),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
                 const SizedBox(height: 32),
                 // 登录/注册按钮
                 SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: _handleSubmit,
+                    onPressed: _isLoading ? null : _handleSubmit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple[400],
                       shape: RoundedRectangleBorder(
@@ -160,14 +405,23 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       elevation: 4,
                     ),
-                    child: Text(
-                      _isLogin ? '登录' : '注册',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            _isLogin ? '登录' : '注册',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
                 ),
                 const SizedBox(height: 16),

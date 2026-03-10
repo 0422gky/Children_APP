@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
-import '../models/current_user.dart';
 
 /// 身份选择页面（首次进入时选择家长/儿童身份）
 class RoleSelectPage extends StatelessWidget {
   const RoleSelectPage({Key? key}) : super(key: key);
 
   void _selectRole(BuildContext context, UserRole role) {
-    // 根据选择的角色初始化用户
-    if (role == UserRole.parent) {
-      CurrentUser.initDefaultParentUser();
-    } else {
-      CurrentUser.initDefaultChildUser();
-    }
-
-    // 跳转到登录页面
-    Navigator.pushReplacementNamed(context, '/login');
+    // 跳转到登录页面，并传递选择的角色
+    Navigator.pushReplacementNamed(
+      context,
+      '/login',
+      arguments: role,
+    );
   }
 
   @override

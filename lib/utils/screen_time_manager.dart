@@ -29,7 +29,7 @@ class ScreenTimeState {
 class ScreenTimeManager {
   // 为了演示方便，这里的“1 分钟”会被压缩成若干秒。
   // demoTickDuration 控制累加节奏，例如 1 秒钟视为 1 分钟。
-  static const Duration _demoTickDuration = Duration(seconds: 5);
+  static const Duration _demoTickDuration = Duration(seconds: 10);
 
   // 每日上限（Demo：30 分钟）
   static const Duration _dailyLimit = Duration(minutes: 30);
@@ -100,4 +100,3 @@ class ScreenTimeManager {
     _controller.close();
   }
 }
-
