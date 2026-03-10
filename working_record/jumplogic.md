@@ -3,7 +3,7 @@
 - 登录成功 ：
   - 检查用户是否已选择兴趣
   - 未选择 → 跳转到 /interest-selection
-  - 已选择 → 跳转到 /home
+  - 已选择 → 跳转到 /home 
 - 注册成功 ：
   - 跳转到 /interest-selection
 ## 2. 兴趣选择页面 

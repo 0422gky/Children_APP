@@ -3,7 +3,7 @@
 From https://github.com/ZKD-FDU/Children_APP
  * branch            habitime-D -> FETCH_HEAD
 Updating a32c647..1317a69
-Fast-forward
+Fast-forward 
  lib/main.dart                          |   2 +
  lib/pages/activity_page.dart           |  27 +--
  lib/pages/chat_page.dart               |  20 +-
