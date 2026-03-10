@@ -2,7 +2,7 @@ name: social_app
 description: 儿童社交线下约玩 App UI Demo
 publish_to: 'none'
 version: 1.0.0+1
-
+# env description
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
