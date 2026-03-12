@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/mock_parent_data.dart';
 import '../models/approval_request.dart';
+import '../models/current_user.dart';
 
 class ApprovalListPage extends StatefulWidget {
   const ApprovalListPage({Key? key}) : super(key: key);
@@ -12,6 +13,19 @@ class ApprovalListPage extends StatefulWidget {
 class _ApprovalListPageState extends State<ApprovalListPage> {
   @override
   Widget build(BuildContext context) {
+    // 家长专属：非家长禁止访问
+    if (!CurrentUser.isParent) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacementNamed('/home');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('仅家长可访问审批页面')),
+        );
+      });
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     final List<ApprovalRequest> pendingRequests = MockParentData
         .approvalRequests
         .where((r) => r.status == ApprovalStatus.pending)

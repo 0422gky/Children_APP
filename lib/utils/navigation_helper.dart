@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/current_user.dart';
 
 /// 导航辅助工具类
 /// 用于处理 BottomNavigationBar 和 Navigator 混合使用的场景
@@ -47,10 +48,69 @@ class NavigationHelper {
     return hasArguments && Navigator.canPop(context);
   }
 
-  /// 统一的 Tab 切换工具：根据 index 切换到底部导航对应的一级页面
+  /// 儿童端 4-tab 路由（无家长入口）
+  static const List<String> _childRoutes = [
+    '/home',
+    '/chat',
+    '/activity',
+    '/profile',
+  ];
+
+  /// 家长端 5-tab 路由（含家长页）
+  static const List<String> _parentRoutes = [
+    '/home',
+    '/chat',
+    '/activity',
+    '/parent',
+    '/profile',
+  ];
+
+  /// 当前角色对应的 tab 路由列表
+  static List<String> get _routes =>
+      CurrentUser.isParent ? _parentRoutes : _childRoutes;
+
+  /// 「我的」tab 的 index（儿童端 3，家长端 4）
+  static int get profileTabIndex =>
+      CurrentUser.isParent ? 4 : 3;
+
+  /// 统一的 Tab 切换工具：按角色分流，儿童端无家长 tab
   static void goToTab(BuildContext context, int index) {
-    const routes = ['/home', '/chat', '/activity', '/parent', '/profile'];
+    final routes = _routes;
     if (index < 0 || index >= routes.length) return;
     Navigator.pushReplacementNamed(context, routes[index]);
+  }
+
+  /// 儿童端 4-tab（首页/聊天/活动/我的）
+  static const List<BottomNavigationBarItem> childTabItems = [
+    BottomNavigationBarItem(icon: Icon(Icons.home), label: '首页'),
+    BottomNavigationBarItem(icon: Icon(Icons.chat), label: '聊天'),
+    BottomNavigationBarItem(icon: Icon(Icons.event), label: '活动'),
+    BottomNavigationBarItem(icon: Icon(Icons.person), label: '我的'),
+  ];
+
+  /// 家长端 5-tab（含家长）
+  static const List<BottomNavigationBarItem> parentTabItems = [
+    BottomNavigationBarItem(icon: Icon(Icons.home), label: '首页'),
+    BottomNavigationBarItem(icon: Icon(Icons.chat), label: '聊天'),
+    BottomNavigationBarItem(icon: Icon(Icons.event), label: '活动'),
+    BottomNavigationBarItem(icon: Icon(Icons.family_restroom), label: '家长'),
+    BottomNavigationBarItem(icon: Icon(Icons.person), label: '我的'),
+  ];
+
+  /// 按角色构建底部导航栏
+  static Widget buildBottomNav(
+    BuildContext context,
+    int currentIndex, {
+    Color? selectedColor,
+  }) {
+    final items =
+        CurrentUser.isParent ? parentTabItems : childTabItems;
+    return BottomNavigationBar(
+      currentIndex: currentIndex,
+      selectedItemColor: selectedColor ?? Colors.purple[400],
+      type: BottomNavigationBarType.fixed,
+      items: items,
+      onTap: (index) => goToTab(context, index),
+    );
   }
 }
