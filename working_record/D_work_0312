@@ -1,0 +1,71 @@
+# 本地图片加载方式修正 (2026/3/12)
+
+**分支：** `fix/asset-image-D`
+
+## 任务目标
+
+- 将本地图片路径（尤其是 `assets/images/...`）统一改为通过 `AssetImage` 或兼容方式加载
+- 不再在页面层直接使用 `NetworkImage(...)` 加载本地资源
+- 修正 assets 文件名与代码引用的大小写不一致问题
+
+## 实际修改内容
+
+### 1. 新增工具类
+
+- **lib/utils/image_provider_helper.dart**
+  - 新增 `getImageProvider(String path)` 方法
+  - 本地路径（非 http/https）→ 返回 `AssetImage(path)`
+  - 远程 URL → 返回 `NetworkImage(path)`
+  - 供各页面统一调用，避免直接写 `NetworkImage` 加载本地资源
+
+### 2. 图片加载方式调整
+
+将以下位置的 `NetworkImage(...)` 改为 `getImageProvider(...)`：
+
+| 文件 | 修改位置 |
+|------|----------|
+| lib/pages/home_page.dart | 好友列表头像 `friend.avatar` |
+| lib/widgets/friend_card.dart | 推荐好友头像 `friend.avatar` |
+| lib/pages/activity_page.dart | 活动发起者头像 `activity.organizerAvatar` |
+| lib/pages/profile_page.dart | 用户头像 `displayUser.avatar` |
+| lib/pages/chat_page.dart | 聊天页顶部好友头像 `friendAvatar` |
+| lib/widgets/chat_bubble.dart | 聊天气泡头像（2 处）`avatar!` |
+
+### 3. 路径大小写修正
+
+`assets/images/` 下实际文件名为 `Avatar1.png`、`Avatar2.png` 等（首字母大写），代码中原先为 `avatar1.png` 等。已统一修正为与文件名一致：
+
+- `avatar1.png` → `Avatar1.png`
+- `avatar2.png` → `Avatar2.png`
+- `avatar3.png` → `Avatar3.png`
+- `avatar4.png` → `Avatar4.png`
+
+涉及文件：`home_page.dart`、`activity_page.dart`、`profile_page.dart`、`chat_page.dart`、`current_user.dart`、`login_page.dart`。
+
+## 涉及文件汇总
+
+- lib/utils/image_provider_helper.dart（新增）
+- lib/models/current_user.dart
+- lib/pages/activity_page.dart
+- lib/pages/chat_page.dart
+- lib/pages/home_page.dart
+- lib/pages/login_page.dart
+- lib/pages/profile_page.dart
+- lib/widgets/chat_bubble.dart
+- lib/widgets/friend_card.dart
+
+## 当前结果
+
+- `lib/` 下已无直接使用 `NetworkImage(...)` 加载图片的写法
+- 本地图片统一通过 `getImageProvider()` 加载，内部对本地路径使用 `AssetImage`
+- 头像路径大小写已与 assets 实际文件名一致
+
+## 逻辑改动说明
+
+-未改动审批逻辑\路由逻辑\其他业务逻辑
+-仅处理了图片资源加载相关逻辑
+
+## 后续可优化点
+
+- 若后续确认所有头像均为本地资源，可考虑去掉 `getImageProvider` 中的 `NetworkImage` 回退逻辑，直接使用 `AssetImage`
+- 活动页的活动封面图 `activity.image` 已使用 `AssetImage`，无需调整
