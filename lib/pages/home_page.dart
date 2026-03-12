@@ -171,7 +171,7 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
-              NavigationHelper.goToTab(context, 4);
+              NavigationHelper.goToTab(context, NavigationHelper.profileTabIndex);
             },
           ),
         ],
@@ -313,36 +313,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        selectedItemColor: Colors.purple[400],
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '首页',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: '聊天',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event),
-            label: '活动',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.family_restroom),
-            label: '家长',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '我的',
-          ),
-        ],
-        onTap: (index) {
-          NavigationHelper.goToTab(context, index);
-        },
-      ),
+      bottomNavigationBar: NavigationHelper.buildBottomNav(context, 0),
     );
   }
 }
