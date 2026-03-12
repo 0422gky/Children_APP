@@ -159,7 +159,8 @@ class _ActivityPageState extends State<ActivityPage> {
                         CircleAvatar(
                           radius: 25,
                           backgroundColor: Colors.orange[200],
-                          backgroundImage: NetworkImage(activity.organizerAvatar),
+                          backgroundImage: AssetImage(activity
+                              .organizerAvatar), // use asset instead of networkImage()
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -221,14 +222,16 @@ class _ActivityPageState extends State<ActivityPage> {
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                        Icon(Icons.calendar_today,
+                            size: 16, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Text(
                           '${activity.date} ${activity.time}',
                           style: TextStyle(color: Colors.grey[700]),
                         ),
                         const SizedBox(width: 16),
-                        Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
+                        Icon(Icons.location_on,
+                            size: 16, color: Colors.grey[600]),
                         const SizedBox(width: 4),
                         Text(
                           activity.location,
@@ -242,8 +245,9 @@ class _ActivityPageState extends State<ActivityPage> {
                       style: TextStyle(
                         color: _statusColor(status),
                         fontSize: 13,
-                        fontWeight:
-                            status == null ? FontWeight.normal : FontWeight.bold,
+                        fontWeight: status == null
+                            ? FontWeight.normal
+                            : FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 12),

@@ -52,7 +52,8 @@ class ChatPage extends StatelessWidget {
             CircleAvatar(
               radius: 18,
               backgroundColor: Colors.purple[200],
-              backgroundImage: NetworkImage(friendAvatar),
+              backgroundImage: AssetImage(
+                  friendAvatar), // use asset instead of network image
             ),
             const SizedBox(width: 12),
             Text(
