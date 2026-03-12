@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
+import '../utils/image_provider_helper.dart';
 
 class FriendCard extends StatelessWidget {
   final User friend;
@@ -34,7 +35,7 @@ class FriendCard extends StatelessWidget {
                   CircleAvatar(
                     radius: 35,
                     backgroundColor: Colors.purple[200],
-                    backgroundImage: NetworkImage(friend.avatar),
+                    backgroundImage: getImageProvider(friend.avatar),
                   ),
                   if (commonInterestsCount > 0)
                     Positioned(

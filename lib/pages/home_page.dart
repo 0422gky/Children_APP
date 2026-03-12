@@ -4,6 +4,7 @@ import '../models/current_user.dart';
 import '../widgets/friend_card.dart';
 import '../widgets/screen_time_banner.dart';
 import '../utils/navigation_helper.dart';
+import '../utils/image_provider_helper.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -13,7 +14,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '1',
       name: '小明',
-      avatar: 'assets/images/avatar1.png',
+      avatar: 'assets/images/Avatar1.png',
       age: 8,
       interests: ['⚽ 足球', '🎮 游戏'],
       location: '附近 500m',
@@ -22,7 +23,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '2',
       name: '小红',
-      avatar: 'assets/images/avatar4.png',
+      avatar: 'assets/images/Avatar4.png',
       age: 7,
       interests: ['🎨 画画', '📚 阅读'],
       location: '附近 1km',
@@ -31,7 +32,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '3',
       name: '小刚',
-      avatar: 'assets/images/avatar2.png',
+      avatar: 'assets/images/Avatar2.png',
       age: 9,
       interests: ['🧩 Lego', '⚽ 足球'],
       location: '附近 800m',
@@ -40,7 +41,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '4',
       name: '小强',
-      avatar: 'assets/images/avatar1.png',
+      avatar: 'assets/images/Avatar1.png',
       age: 8,
       interests: ['⚽ 足球', '🎮 游戏', '🧩 Lego'],
       location: '附近 600m',
@@ -49,7 +50,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '5',
       name: '小美',
-      avatar: 'assets/images/avatar4.png',
+      avatar: 'assets/images/Avatar4.png',
       age: 7,
       interests: ['⚽ 足球', '🎨 画画'],
       location: '附近 1.2km',
@@ -58,7 +59,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '6',
       name: '小乐',
-      avatar: 'assets/images/avatar3.png',
+      avatar: 'assets/images/Avatar3.png',
       age: 8,
       interests: ['🧩 Lego', '📚 阅读', '🎮 游戏'],
       location: '附近 900m',
@@ -67,7 +68,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '7',
       name: '小文',
-      avatar: 'assets/images/avatar3.png',
+      avatar: 'assets/images/Avatar3.png',
       age: 9,
       interests: ['📚 阅读', '🎨 画画'],
       location: '附近 1.5km',
@@ -76,7 +77,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '8',
       name: '小宇',
-      avatar: 'assets/images/avatar2.png',
+      avatar: 'assets/images/Avatar2.png',
       age: 8,
       interests: ['🎮 游戏', '⚽ 足球', '🧩 Lego'],
       location: '附近 700m',
@@ -89,7 +90,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '1',
       name: '小明',
-      avatar: 'assets/images/avatar1.png',
+      avatar: 'assets/images/Avatar1.png',
       age: 8,
       interests: ['⚽ 足球', '🎮 游戏'],
       location: '附近 500m',
@@ -98,7 +99,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '2',
       name: '小红',
-      avatar: 'assets/images/avatar4.png',
+      avatar: 'assets/images/Avatar4.png',
       age: 7,
       interests: ['🎨 画画', '📚 阅读'],
       location: '附近 1km',
@@ -107,7 +108,7 @@ class HomePage extends StatelessWidget {
     User(
       id: '3',
       name: '小刚',
-      avatar: 'assets/images/avatar2.png',
+      avatar: 'assets/images/Avatar2.png',
       age: 9,
       interests: ['🧩 Lego', '⚽ 足球'],
       location: '附近 800m',
@@ -267,7 +268,7 @@ class HomePage extends StatelessWidget {
                     leading: CircleAvatar(
                       radius: 30,
                       backgroundColor: Colors.purple[200],
-                      backgroundImage: NetworkImage(friend.avatar),
+                      backgroundImage: getImageProvider(friend.avatar),
                     ),
                     title: Text(
                       friend.name,

@@ -3,6 +3,7 @@ import '../models/user.dart';
 import '../models/current_user.dart';
 import '../services/binding_service.dart';
 import '../utils/navigation_helper.dart';
+import '../utils/image_provider_helper.dart';
 import '../widgets/screen_time_banner.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -18,7 +19,7 @@ class ProfilePage extends StatelessWidget {
         User(
           id: '0',
           name: '我',
-          avatar: 'assets/images/avatar1.png',
+          avatar: 'assets/images/Avatar1.png',
           age: 8,
           interests: [],
           location: '附近',
@@ -78,7 +79,7 @@ class ProfilePage extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 55,
                       backgroundColor: Colors.purple[200],
-                      backgroundImage: NetworkImage(displayUser.avatar),
+                      backgroundImage: getImageProvider(displayUser.avatar),
                     ),
                   ),
                   const SizedBox(height: 16),

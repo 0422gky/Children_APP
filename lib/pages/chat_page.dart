@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../widgets/chat_bubble.dart';
 import '../utils/navigation_helper.dart';
+import '../utils/image_provider_helper.dart';
 import '../widgets/screen_time_banner.dart';
 
 class ChatPage extends StatelessWidget {
@@ -41,8 +42,8 @@ class ChatPage extends StatelessWidget {
     final User? friend = ModalRoute.of(context)?.settings.arguments as User?;
     final String friendName = friend?.name ?? '好友';
     final String friendAvatar =
-        friend?.avatar ?? 'assets/images/avatar1.png'; // asset
-    const String myAvatar = 'assets/images/avatar1.png'; // asset
+        friend?.avatar ?? 'assets/images/Avatar1.png'; // asset
+    const String myAvatar = 'assets/images/Avatar1.png'; // asset
 
     return Scaffold(
       backgroundColor: Colors.blue[50],
@@ -52,7 +53,7 @@ class ChatPage extends StatelessWidget {
             CircleAvatar(
               radius: 18,
               backgroundColor: Colors.purple[200],
-              backgroundImage: NetworkImage(friendAvatar),
+              backgroundImage: getImageProvider(friendAvatar),
             ),
             const SizedBox(width: 12),
             Text(

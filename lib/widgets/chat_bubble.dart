@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/image_provider_helper.dart';
 
 class ChatBubble extends StatelessWidget {
   final String message;
@@ -24,7 +25,7 @@ class ChatBubble extends StatelessWidget {
             CircleAvatar(
               radius: 20,
               backgroundColor: Colors.purple[200],
-              backgroundImage: NetworkImage(avatar!),
+              backgroundImage: getImageProvider(avatar!),
             ),
             const SizedBox(width: 8),
           ],
@@ -54,7 +55,7 @@ class ChatBubble extends StatelessWidget {
             CircleAvatar(
               radius: 20,
               backgroundColor: Colors.blue[200],
-              backgroundImage: NetworkImage(avatar!),
+              backgroundImage: getImageProvider(avatar!),
             ),
           ],
         ],

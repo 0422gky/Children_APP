@@ -43,7 +43,7 @@ class CurrentUser {
     _user = User(
       id: '0',
       name: '我',
-      avatar: 'assets/images/avatar1.png', //asset assets\images\Avatar1.png
+      avatar: 'assets/images/Avatar1.png', //asset assets\images\Avatar1.png
       age: 8,
       interests: [], // 初始为空，需要选择
       location: '附近',
@@ -57,7 +57,7 @@ class CurrentUser {
     _user = User(
       id: 'parent_0',
       name: '家长',
-      avatar: 'assets/images/avatar1.png', //asset
+      avatar: 'assets/images/Avatar1.png', //asset
       age: 35,
       interests: [],
       location: '附近',

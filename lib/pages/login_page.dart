@@ -181,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
     final user = User(
       id: dbUser.id,
       name: name,
-      avatar: 'assets/images/avatar1.png',
+      avatar: 'assets/images/Avatar1.png',
       age: age,
       interests: interests,
       location: '附近',

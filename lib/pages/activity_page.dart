@@ -4,6 +4,7 @@ import '../models/mock_parent_data.dart';
 import '../models/approval_request.dart';
 import '../widgets/screen_time_banner.dart';
 import '../utils/navigation_helper.dart';
+import '../utils/image_provider_helper.dart';
 
 class ActivityPage extends StatefulWidget {
   ActivityPage({super.key});
@@ -24,7 +25,7 @@ class _ActivityPageState extends State<ActivityPage> {
       location: '中央公园',
       organizerId: '1',
       organizerName: '小明',
-      organizerAvatar: 'assets/images/avatar1.png',
+      organizerAvatar: 'assets/images/Avatar1.png',
       participantIds: ['1', '2'],
       maxParticipants: 6,
       interest: '⚽ 足球',
@@ -39,7 +40,7 @@ class _ActivityPageState extends State<ActivityPage> {
       location: '社区活动中心',
       organizerId: '3',
       organizerName: '小刚',
-      organizerAvatar: 'assets/images/avatar2.png',
+      organizerAvatar: 'assets/images/Avatar2.png',
       participantIds: ['3', '4'],
       maxParticipants: 8,
       interest: '🧩 Lego',
@@ -54,7 +55,7 @@ class _ActivityPageState extends State<ActivityPage> {
       location: '艺术教室',
       organizerId: '2',
       organizerName: '小红',
-      organizerAvatar: 'assets/images/avatar4.png',
+      organizerAvatar: 'assets/images/Avatar4.png',
       participantIds: ['2'],
       maxParticipants: 5,
       interest: '🎨 画画',
@@ -159,7 +160,7 @@ class _ActivityPageState extends State<ActivityPage> {
                         CircleAvatar(
                           radius: 25,
                           backgroundColor: Colors.orange[200],
-                          backgroundImage: NetworkImage(activity.organizerAvatar),
+                          backgroundImage: getImageProvider(activity.organizerAvatar),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
