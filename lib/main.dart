@@ -14,6 +14,26 @@ import 'pages/approval_list_page.dart';
 import 'pages/safety_page.dart';
 import 'pages/screen_time_limit_page.dart';
 
+/// 家长专属路由守卫：非家长跳转 /home
+Widget _parentOnlyRoute(Widget child) {
+  if (!CurrentUser.isParent) {
+    return Builder(
+      builder: (context) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Navigator.of(context).pushReplacementNamed('/home');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('仅家长可访问该页面')),
+          );
+        });
+        return const Scaffold(
+          body: Center(child: CircularProgressIndicator()),
+        );
+      },
+    );
+  }
+  return child;
+}
+
 void main() {
   // 不初始化用户，让用户先选择身份
   runApp(const MyApp());
@@ -42,8 +62,10 @@ class MyApp extends StatelessWidget {
         '/activity': (context) => ActivityPage(),
         '/create-activity': (context) => const CreateActivityPage(),
         '/profile': (context) => ProfilePage(),
-        '/parent': (context) => const ParentHomePage(),
-        '/approval-list': (context) => const ApprovalListPage(),
+        '/parent': (context) =>
+            _parentOnlyRoute(const ParentHomePage()),
+        '/approval-list': (context) =>
+            _parentOnlyRoute(const ApprovalListPage()),
         '/safety': (context) => const SafetyPage(),
         '/screen-time-limit': (context) => const ScreenTimeLimitPage(),
         '/binding-code': (context) {

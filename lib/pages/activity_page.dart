@@ -292,35 +292,10 @@ class _ActivityPageState extends State<ActivityPage> {
           );
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2,
-        selectedItemColor: Colors.orange[400],
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '首页',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: '聊天',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event),
-            label: '活动',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.family_restroom),
-            label: '家长',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '我的',
-          ),
-        ],
-        onTap: (index) {
-          NavigationHelper.goToTab(context, index);
-        },
+      bottomNavigationBar: NavigationHelper.buildBottomNav(
+        context,
+        2,
+        selectedColor: Colors.orange[400],
       ),
     );
   }

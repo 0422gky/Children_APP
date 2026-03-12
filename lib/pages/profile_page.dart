@@ -249,7 +249,7 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              // 绑定状态卡片
+              // 绑定状态卡片（儿童端显示）
               FutureBuilder<String?>(
                 future: CurrentUser.user != null
                     ? BindingService.instance
@@ -296,55 +296,33 @@ class ProfilePage extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 12),
-              Card(
-                margin: const EdgeInsets.symmetric(horizontal: 24),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+              // 家长设置：仅家长端显示，儿童端不提供家长入口
+              if (CurrentUser.isParent)
+                Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 24),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: ListTile(
+                    leading:
+                        const Icon(Icons.family_restroom, color: Colors.green),
+                    title: const Text('家长设置'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      NavigationHelper.goToTab(context, 3);
+                    },
+                  ),
                 ),
-                child: ListTile(
-                  leading:
-                      const Icon(Icons.family_restroom, color: Colors.green),
-                  title: const Text('家长设置'),
-                  trailing: const Icon(Icons.arrow_forward_ios),
-                  onTap: () {
-                    NavigationHelper.goToTab(context, 3);
-                  },
-                ),
-              ),
+              if (CurrentUser.isParent) const SizedBox(height: 12),
             ],
           ],
         ),
       ),
       bottomNavigationBar: isCurrentUser
-          ? BottomNavigationBar(
-              currentIndex: 4,
-              selectedItemColor: Colors.purple[400],
-              type: BottomNavigationBarType.fixed,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: '首页',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.chat),
-                  label: '聊天',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.event),
-                  label: '活动',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.family_restroom),
-                  label: '家长',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: '我的',
-                ),
-              ],
-              onTap: (index) {
-                NavigationHelper.goToTab(context, index);
-              },
+          ? NavigationHelper.buildBottomNav(
+              context,
+              NavigationHelper.profileTabIndex,
+              selectedColor: Colors.purple[400],
             )
           : null,
     );
