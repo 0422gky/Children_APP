@@ -1,0 +1,44 @@
+# 儿童端与家长端隔离
+
+新分支： `feature/parent-approval-isolation`
+
+## 做了什么
+
+实现儿童端与家长端权限隔离，活动审批仅家长可操作。
+
+### 1. 儿童端底部导航
+
+- 移除「家长」tab
+- 儿童无法通过底部导航进入家长端
+
+### 2. 导航按角色分流
+
+- `NavigationHelper.goToTab` 根据 `CurrentUser.isParent` 选择路由
+- 儿童：4-tab 路由，无 `/parent`
+- 家长：5-tab 路由，含家长页
+- `/parent`、`/approval-list` 增加权限校验
+- 非家长访问时自动跳转 `/home` 并提示
+
+### 4. 审批页校验
+
+- `ApprovalListPage` 进入时做校验，非家长不能访问
+
+### 5. 家长设置入口
+
+- 儿童端 Profile 页隐藏「家长设置」卡片
+
+## 涉及文件
+
+- lib/utils/navigation_helper.dart
+- lib/main.dart
+- lib/pages/home_page.dart
+- lib/pages/chat_page.dart
+- lib/pages/activity_page.dart
+- lib/pages/profile_page.dart
+- lib/pages/parent_home_page.dart
+- lib/pages/approval_list_page.dart
+
+## 结果
+
+- 儿童：只能发起申请、查看状态，不能进入家长端或审批页
+- 家长：可正常进入审批页、同意/拒绝申请
