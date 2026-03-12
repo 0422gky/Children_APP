@@ -17,14 +17,15 @@ class ChatBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
       child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isMe && avatar != null) ...[
             CircleAvatar(
               radius: 20,
               backgroundColor: Colors.purple[200],
-              backgroundImage: NetworkImage(avatar!),
+              backgroundImage: AssetImage(avatar!), // asset instead of network
             ),
             const SizedBox(width: 8),
           ],
@@ -54,7 +55,8 @@ class ChatBubble extends StatelessWidget {
             CircleAvatar(
               radius: 20,
               backgroundColor: Colors.blue[200],
-              backgroundImage: NetworkImage(avatar!),
+              backgroundImage:
+                  AssetImage(avatar!), // asset image instead of network image
             ),
           ],
         ],

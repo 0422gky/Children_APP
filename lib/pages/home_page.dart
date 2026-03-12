@@ -267,7 +267,8 @@ class HomePage extends StatelessWidget {
                     leading: CircleAvatar(
                       radius: 30,
                       backgroundColor: Colors.purple[200],
-                      backgroundImage: NetworkImage(friend.avatar),
+                      backgroundImage:
+                          AssetImage(friend.avatar), // asset instead of network
                     ),
                     title: Text(
                       friend.name,

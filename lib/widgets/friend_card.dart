@@ -34,7 +34,8 @@ class FriendCard extends StatelessWidget {
                   CircleAvatar(
                     radius: 35,
                     backgroundColor: Colors.purple[200],
-                    backgroundImage: NetworkImage(friend.avatar),
+                    backgroundImage:
+                        AssetImage(friend.avatar), // asset instead of network
                   ),
                   if (commonInterestsCount > 0)
                     Positioned(
