@@ -21,6 +21,7 @@ class ProfilePage extends StatelessWidget {
           avatar: 'https://i.pravatar.cc/150?img=10',
           age: 8,
           interests: [],
+          personality: [],
           location: '附近',
           role: UserRole.child,
         );
@@ -168,6 +169,58 @@ class ProfilePage extends StatelessWidget {
                 ],
               ),
             ),
+            // 性格标签
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 16,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '🧠 性格特征',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.purple[700],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: displayUser.personality.map((trait) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[200],
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          trait,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blue[900],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
             // 如果是查看其他用户，显示操作按钮
             if (!isCurrentUser) ...[
               Padding(
@@ -249,7 +302,8 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              // 绑定状态卡片
+            //这边写了个判断，只有儿童端显示是否绑定家长
+            if (displayUser.role == UserRole.child) ...[
               FutureBuilder<String?>(
                 future: CurrentUser.user != null
                     ? BindingService.instance.getParentByChild(CurrentUser.user!.id)
@@ -297,6 +351,7 @@ class ProfilePage extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 12),
+            ],
               Card(
                 margin: const EdgeInsets.symmetric(horizontal: 24),
                 shape: RoundedRectangleBorder(

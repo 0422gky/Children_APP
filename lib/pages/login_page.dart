@@ -87,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
         // 检查是否已选择兴趣
         final childProfile = await _authService.getChildProfile(dbUser.id);
         if (childProfile == null || childProfile.interests.isEmpty) {
-          Navigator.pushReplacementNamed(context, '/interest-selection');
+          Navigator.pushReplacementNamed(context, '/personality-selection');
         } else {
           Navigator.pushReplacementNamed(context, '/home');
         }
@@ -143,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
       if (dbUser.role == 'parent') {
         Navigator.pushReplacementNamed(context, '/parent');
       } else {
-        Navigator.pushReplacementNamed(context, '/interest-selection');
+        Navigator.pushReplacementNamed(context, '/personality-selection');
       }
     } catch (e) {
       _showError('注册失败：${e.toString()}');
@@ -160,6 +160,7 @@ class _LoginPageState extends State<LoginPage> {
     String name;
     int age;
     List<String> interests = [];
+    List<String> personality = [];
 
     if (role == UserRole.parent) {
       final profile = await _authService.getParentProfile(dbUser.id);
@@ -170,6 +171,7 @@ class _LoginPageState extends State<LoginPage> {
       name = profile?.childName ?? '我';
       age = profile?.age ?? 8;
       interests = profile?.interests ?? [];
+      personality = profile?.personality ?? [];
     }
 
     final user = User(
@@ -178,6 +180,7 @@ class _LoginPageState extends State<LoginPage> {
       avatar: 'https://i.pravatar.cc/150?img=${dbUser.id.hashCode % 20}',
       age: age,
       interests: interests,
+      personality: personality,
       location: '附近',
       role: role,
     );
